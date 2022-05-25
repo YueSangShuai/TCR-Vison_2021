@@ -116,6 +116,7 @@ struct RM_BuffData{
     float yaw = 0;
     RotatedRect box;
     Point2f point[4];
+    Point2f circle_center;
 };
 typedef enum{
     BUFF_FIRST_SHOOT,

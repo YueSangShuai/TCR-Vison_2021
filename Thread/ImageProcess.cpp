@@ -256,8 +256,8 @@ void ImageProcess::ImageConsumer() {
                         line(Image[(ImageIndex) % BUFFER].SrcImage, Buffs[3].point[i % 4], Buffs[3].point[(i + 1) % 4],
                              Scalar(0, 0, 255), 4, 4);
                     }
-                    buff_pitch=Buffs[3].pitch;
-                    buff_yaw=Buffs[3].yaw;
+                    buff_pitch=-Buffs[3].pitch;
+                    buff_yaw=-Buffs[3].yaw;
                     char test[100];
                     sprintf(test, "tz:%0.4f", Buffs[3].tz);
                     cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test, cv::Point(10, 20),
@@ -282,6 +282,7 @@ void ImageProcess::ImageConsumer() {
 //            cout<<"buff_pitch:"<<buff_pitch<<endl;
 //            cout<<"buff_yaw:"<<buff_yaw<<endl;
             // ArmorToData(Shoot,buff_pitch,buff_yaw);
+
             ArmorToData(Shoot,buff_pitch,buff_yaw);
             char test[100];
             sprintf(test, "getPitch:%0.4f   getYaw:%0.4f", Image[(ImageIndex)%BUFFER].ReciveStm32.pitch,Image[(ImageIndex)%BUFFER].ReciveStm32.yaw);

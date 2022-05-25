@@ -5,9 +5,8 @@
 #define BUFF_AREA_RATIO 640.0       //最终大符内轮廓面积与图片面积像素比
 #define BUFFER_BUFF_BOX 4             //大符内轮廓存储缓冲数量
 #define BUFF_CIRCLE_BOX    3             //圆形计算所需个数,应比总数量少1,最后一位为当前识别目标
-#define BUFF_MIN_DISTANCE 100             //两次记录最短间距
-#define BUFF_ANGLE_NUM 7             //两次记录最短间距
-#define TIME_ANGLE_MIN 0.5             //最小角度差
+#define BUFF_MIN_DISTANCE 50             //两次记录最短间距
+
 #define G 9.80665
 /*************************************************************/
 RM_BuffData BuffBox[BUFFER_BUFF_BOX];       //存储最近几帧的大符信息
@@ -73,7 +72,6 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src){
             line(Src,BuffBox[t].point[(i+1)%4],BuffBox[t].point[i%4],Scalar(255,0,0),1,4);
         }
     }
-
     if(BuffNum<3)
         return  (RM_BuffData*)-1;
     return BuffBox;
