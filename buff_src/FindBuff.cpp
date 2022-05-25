@@ -26,6 +26,11 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src){
 //    temp= rgbtohsv(Src,_color);
 //    vector<RotatedRect> BuffClump = FindBestBuff(Src,temp);
     vector<RotatedRect> BuffClump = FindBestBuff(Src,dst);
+    if(BuffClump.size()!=0){
+        Point2f center=BuffClump[0].center;
+        cout<<"center:"<<center;
+        circle(Src,center,2,Scalar(0,255,0));
+    }
     if(BuffClump.size()<=0){
         cout<<"当前大符未识别到目标";
         return (RM_BuffData*)-1;
@@ -118,44 +123,46 @@ void FindBuff::PreDelBuff(Mat Src, Mat &dst){
  * @param Src
  * @return
  */
-vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst){
+vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
     vector<vector<Point>> contours;
     vector<Vec4i> hierarchy;
-    vector<RotatedRect>box_buffs;
+    vector<RotatedRect> box_buffs;
     //寻找全部轮廓,用于计算内轮廓数量
-    findContours(dst,contours,hierarchy,CV_RETR_TREE,CV_CHAIN_APPROX_NONE);
+    findContours(dst, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_NONE);
     bool success = false;                               //记录是否成功找到符合要求扇叶
 
-    for(size_t i = 0;i<hierarchy.size();i++){
-        if(hierarchy[i][2] == -1)continue;
-        if(contours[i].size()<6)continue;
+    for (size_t i = 0; i < hierarchy.size(); i++) {
+        if (hierarchy[i][2] == -1)continue;
+        if (contours[i].size() < 6)continue;
         RotatedRect box = fitEllipse(contours[i]);
 
-        float shanye_bili = box.size.height/box.size.width;
-        float shanye_area=box.size.height*box.size.height;
+        float shanye_bili = box.size.height / box.size.width;
+        float shanye_area = box.size.height * box.size.height;
 
-        if(shanye_bili>2.9||(shanye_bili<1.7&&shanye_bili>1.5)||shanye_bili<1.1||box.size.area()<500)continue;
-        ellipse(Src, box, Scalar(255,0,255), 5, CV_AA);
-        int * nei_lunkuo = (int *)malloc(contours.size()*sizeof(int));
-        memset(nei_lunkuo, 0, contours.size()*sizeof(int));
+        if (shanye_bili > 2.9 || (shanye_bili < 1.7 && shanye_bili > 1.5) || shanye_bili < 1.1 ||
+            box.size.area() < 500)
+            continue;
+        ellipse(Src, box, Scalar(255, 0, 255), 5, CV_AA);
+        int *nei_lunkuo = (int *) malloc(contours.size() * sizeof(int));
+        memset(nei_lunkuo, 0, contours.size() * sizeof(int));
         //判断第一个内轮廓是否符合标准
-        if(contours[hierarchy[i][2]].size()>=6){
+        if (contours[hierarchy[i][2]].size() >= 6) {
             RotatedRect first_box = fitEllipse(contours[hierarchy[i][2]]);
 
 //            cout<<"首个扇叶bili:"<<(float)first_box.size.height/(float)first_box.size.width<<endl;
 //            cout<<"首个面积比1:"<<box.size.area()/first_box.size.area()<<endl;
 //            cout<<"首个轮廓面积："<<(Src.cols*Src.rows)/box.size.area()<<endl;
-            if(box.size.area()/first_box.size.area()<10)
+            if (box.size.area() / first_box.size.area() < 10)
                 *(nei_lunkuo + hierarchy[i][2]) = 1;
         }
         int j = hierarchy[i][2];
-        while(hierarchy[j][0]!=-1){
-            if(contours[hierarchy[j][0]].size()<6){
+        while (hierarchy[j][0] != -1) {
+            if (contours[hierarchy[j][0]].size() < 6) {
                 j = hierarchy[j][0];
                 continue;
             }
             RotatedRect box2 = fitEllipse(contours[hierarchy[j][0]]);
-            if(box.size.area()/box2.size.area()>10){
+            if (box.size.area() / box2.size.area() > 10) {
                 j = hierarchy[j][0];
                 continue;
             }
@@ -163,39 +170,41 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst){
             j = hierarchy[j][0];
         }
         int z = hierarchy[i][2];
-        while(hierarchy[z][1]!=-1){
-            if(contours[hierarchy[z][1]].size()<6){
+        while (hierarchy[z][1] != -1) {
+            if (contours[hierarchy[z][1]].size() < 6) {
                 z = hierarchy[z][1];
                 continue;
             }
             RotatedRect box2 = fitEllipse(contours[hierarchy[j][0]]);
-            if(box.size.area()/box2.size.area()>10){
+            if (box.size.area() / box2.size.area() > 10) {
                 z = hierarchy[z][1];
                 continue;
             }
-            if(box.size.area()/box2.size.area()>7)continue;
+            if (box.size.area() / box2.size.area() > 7)continue;
             *(nei_lunkuo + hierarchy[z][1]) = 1;
             z = hierarchy[z][1];
         }
         int num = 0;
-        for(int t = 0;t<contours.size();t++){
-            if(*(nei_lunkuo + t) == 1){
+        for (int t = 0; t < contours.size(); t++) {
+            if (*(nei_lunkuo + t) == 1) {
                 num++;
             }
         }
-        cout<<"内轮廓数量:"<<num<<endl;
-        if(num == 1){
+        cout << "内轮廓数量:" << num << endl;
+        if (num == 1) {
             success = true;
-            if(contours[hierarchy[i][2]].size()<6)continue;
+            if (contours[hierarchy[i][2]].size() < 6)continue;
             RotatedRect box_buff = fitEllipse(contours[hierarchy[i][2]]);
-            if(box_buff.angle<5||box_buff.angle>175){
-                if(box.angle>5&&box.angle<175)continue;
-            }else{
-                if(!((tan(box_buff.angle*PI/180)*tan(box.angle*PI/180) + 1)<0.3||(box_buff.angle - box.angle)<5))continue;
+            if (box_buff.angle < 5 || box_buff.angle > 175) {
+                if (box.angle > 5 && box.angle < 175)continue;
+            } else {
+                if (!((tan(box_buff.angle * PI / 180) * tan(box.angle * PI / 180) + 1) < 0.3 ||
+                      (box_buff.angle - box.angle) < 5))
+                    continue;
             }
 //            cout<<"轮廓面积最终比："<<(Src.cols*Src.rows)/box_buff.size.area()<<endl;
             box_buffs.push_back(box_buff);
-            ellipse(Src, box_buff, Scalar(255,0,0), 5, CV_AA);
+            ellipse(Src, box_buff, Scalar(255, 0, 0), 5, CV_AA);
         }
         free(nei_lunkuo);
 //        if(num == 2){
@@ -212,15 +221,82 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst){
 //        }
 
     }
+    if (contours.size() > 2) {
+        vector<Point> possibleCenter;
+        for (uint i = 0; i < contours.size(); i++) {
+            int sub = hierarchy[i][2];
+            if (sub = -1)//有子轮廓
+            {
+                Point2f center;
+                float radius;
+                minEnclosingCircle(contours[i], center, radius);
+                //半径需要具体调试
+                if (radius < 20 && radius > 8) {
+                    possibleCenter.push_back(center);
+                }
+            }
+        }
+        for(int i=0;i<box_buffs.size();i++){
+            float x2,x3,x4,y2,y3,y4;
+            //获取目标装甲板的四个角点
+            Point2f vectors[4];
+            box_buffs[i].points(vectors);
+            float dd1= getPointsDistance(vectors[0],vectors[1]);
+            float dd2= getPointsDistance(vectors[1],vectors[2]);
+            if(dd1<dd2)
+            {
+                x2=box_buffs[i].center.x-vectors[0].x;
+                y2=box_buffs[i].center.y-vectors[0].y;
+                x3=box_buffs[i].center.x-vectors[1].x;
+                y3=box_buffs[i].center.y-vectors[1].y;
+                dd2=dd1;
+            }
+            else
+            {
+                x2=box_buffs[i].center.x-vectors[1].x;
+                y2=box_buffs[i].center.y-vectors[1].y;
+                x3=box_buffs[i].center.x-vectors[2].x;
+                y3=box_buffs[i].center.y-vectors[2].y;
+                dd1=dd2;
+            }
+            x4=x2-x3;y4=y2-y3;
+            //遍历所有可能的中心R点
+            for (Point2f p:possibleCenter)
+            {
+                //计算待选中心和装甲板中心的角度
+                float x1=box_buffs[i].center.x-p.x;
+                float y1=box_buffs[i].center.y-p.y;
+
+                float angle=0;
+                float d1 = getPointsDistance(p,box_buffs[i].center);
+
+                //计算与目标装甲板中心的夹角
+                angle=acos((x4*x1+y1*y4)/dd1/d1)*57.3;
+
+                int minRadius=110;
+                int maxRadius=200;
+                //根据半径范围和与短边（锤子柄）的角度筛选出中心R
+                if(d1>minRadius && d1 < maxRadius )
+                {
+                    Mat debug=src.clone();
+                    circle_center=p;
+                    circle(Src,p,CV_AA,Scalar(255,0,0),8);
+                    imshow("绘制ing",Src);
+                    break;
+                }
+            }
+        }
+    }
+
 //    cout<<"完成"<<endl;
-    imshow("绘制ing",Src);
+      imshow("绘制ing", Src);
 //    //保存录像
 //    outputVideo<<dst;
 //    if(!success)
 //        waitKey();
-    return box_buffs;
-}
+        return box_buffs;
 
+}
 /**
  * @brief FindBuff::GetShootBuff
  * @param box_buffs

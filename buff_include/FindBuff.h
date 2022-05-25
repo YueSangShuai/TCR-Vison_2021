@@ -7,9 +7,13 @@ private:
     void PreDelBuff(Mat Src, Mat &dst);
     vector<RotatedRect> FindBestBuff(Mat Src,Mat & dst);
     RotatedRect GetShootBuff(vector<RotatedRect> box_buffs,Mat Src);
+    Point2f circle_center;
 
 public:
     RM_BuffData* BuffModeSwitch(Mat Src);
+    Point2f getCircleCenter(){
+        return circle_center;
+    }
 };
 
 #endif // FINDBUFF_H
