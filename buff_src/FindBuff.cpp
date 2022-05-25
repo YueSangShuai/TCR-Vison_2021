@@ -88,12 +88,12 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src){
 void FindBuff::PreDelBuff(Mat Src, Mat &dst){
     double t = (double)cvGetTickCount();            //计时
     cvtColor(Src,dst,CV_RGB2GRAY);
-    threshold(dst,dst,70,255,CV_THRESH_BINARY);
+    threshold(dst,dst,50,255,CV_THRESH_BINARY);
     cv::Mat gray_element=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(7,7));
     dilate(dst,dst,gray_element);
     erode(dst,dst,gray_element);
-    cv::Mat gray_element2=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(3,3));
-    dilate(dst,dst,gray_element2);
+//    cv::Mat gray_element2=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(3,3));
+//    dilate(dst,dst,gray_element);
     imshow("灰度二值化",dst);
 //    vector<Mat> spli;
     Mat hsv;
