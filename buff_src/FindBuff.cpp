@@ -2,7 +2,7 @@
 /********************大符调试********************************/
 #define PI 3.14159
 #define BUFF_W_RATIO_H 1.9              //最终大符内轮廓长宽比
-#define BUFF_AREA_RATIO 710.0       //最终大符内轮廓面积与图片面积像素比
+#define BUFF_AREA_RATIO 640.0       //最终大符内轮廓面积与图片面积像素比
 #define BUFFER_BUFF_BOX 4             //大符内轮廓存储缓冲数量
 #define BUFF_CIRCLE_BOX    3             //圆形计算所需个数,应比总数量少1,最后一位为当前识别目标
 #define BUFF_MIN_DISTANCE 100             //两次记录最短间距
@@ -88,7 +88,7 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src){
 void FindBuff::PreDelBuff(Mat Src, Mat &dst){
     double t = (double)cvGetTickCount();            //计时
     cvtColor(Src,dst,CV_RGB2GRAY);
-    threshold(dst,dst,50,255,CV_THRESH_BINARY);
+    threshold(dst,dst,40,255,CV_THRESH_BINARY);
     cv::Mat gray_element=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(7,7));
     dilate(dst,dst,gray_element);
     erode(dst,dst,gray_element);
@@ -129,10 +129,11 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst){
     bool success = false;                               //记录是否成功找到符合要求扇叶
     for(size_t i = 0;i<hierarchy.size();i++){
         if(hierarchy[i][2] == -1)continue;
-        //if(contours[i].size()<6)continue;
+        if(contours[i].size()<6)continue;
         RotatedRect box = fitEllipse(contours[i]);
 
         float shanye_bili = box.size.height/box.size.width;
+
         if(shanye_bili>2.9||(shanye_bili<1.7&&shanye_bili>1.5)||shanye_bili<1.1||box.size.area()<500)continue;
         ellipse(Src, box, Scalar(255,0,255), 5, CV_AA);
         int * nei_lunkuo = (int *)malloc(contours.size()*sizeof(int));
@@ -182,7 +183,7 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst){
                 num++;
             }
         }
-//        cout<<"内轮廓数量:"<<num<<endl;
+        cout<<"内轮廓数量:"<<num<<endl;
         if(num == 1){
             success = true;
             if(contours[hierarchy[i][2]].size()<6)continue;
