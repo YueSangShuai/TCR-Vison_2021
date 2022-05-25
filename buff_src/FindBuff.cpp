@@ -18,7 +18,7 @@ int BuffNum = 0;
  * @return 返回大符识别矩形
  * @remark 大符识别接口,传入当前帧图像,进行图像处理和寻找目标,返回最终待击打矩形,搭配相应滤光片使用使图像更稳定
  */
- RM_BuffData* FindBuff::BuffModeSwitch(Mat Src){
+RM_BuffData* FindBuff::BuffModeSwitch(Mat Src){
     Mat dst;
     RM_BuffData Buff;
     PreDelBuff(Src,dst);
@@ -59,7 +59,7 @@ int BuffNum = 0;
             }
         }
         if(index!=-1&&GetDistance(BuffObject.center,BuffBox[(index+1)%BUFF_CIRCLE_BOX].box.center)>BUFF_MIN_DISTANCE
-                &&GetDistance(BuffObject.center,BuffBox[(index+2)%BUFF_CIRCLE_BOX].box.center)>BUFF_MIN_DISTANCE){
+           &&GetDistance(BuffObject.center,BuffBox[(index+2)%BUFF_CIRCLE_BOX].box.center)>BUFF_MIN_DISTANCE){
             //符合条件存入数组
             BuffBox[index] = Buff;
             BuffNum++;                  //指向下一个位置
@@ -90,9 +90,8 @@ void FindBuff::PreDelBuff(Mat Src, Mat &dst){
     cvtColor(Src,dst,CV_RGB2GRAY);
     threshold(dst,dst,70,255,CV_THRESH_BINARY);
     cv::Mat gray_element=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(7,7));
-    cv::Mat gray_element2=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(5,5));
     dilate(dst,dst,gray_element);
-    erode(dst,dst,gray_element2);
+    erode(dst,dst,gray_element);
     imshow("灰度二值化",dst);
 //    vector<Mat> spli;
     Mat hsv;
@@ -110,6 +109,7 @@ void FindBuff::PreDelBuff(Mat Src, Mat &dst){
     t=(double)cvGetTickCount()-t;
     t = t/(cvGetTickFrequency()*1000);                                //t2为一帧的运行时间,也是单位时间
     printf("used time is %gms\n",t);
+//    imshow("分割",dst);
 
 }
 
@@ -122,109 +122,99 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst){
     vector<vector<Point>> contours;
     vector<Vec4i> hierarchy;
     vector<RotatedRect>box_buffs;
-    vector<Point> possibleCenter;
     //寻找全部轮廓,用于计算内轮廓数量
     findContours(dst,contours,hierarchy,CV_RETR_TREE,CV_CHAIN_APPROX_NONE);
     bool success = false;                               //记录是否成功找到符合要求扇叶
     for(size_t i = 0;i<hierarchy.size();i++){
-        if(hierarchy[i][2] == -1) {
-            Point2f center;
-            float radius;
-            int rRadius = 20;
-            minEnclosingCircle(contours[i], center, radius);
-            if (radius < rRadius && radius > 8) {
-                possibleCenter.push_back(center);
-            } else {
-                //if(contours[i].size()<6)continue;
-                RotatedRect box = fitEllipse(contours[i]);
+        if(hierarchy[i][2] == -1)continue;
+        //if(contours[i].size()<6)continue;
+        RotatedRect box = fitEllipse(contours[i]);
 
-                float shanye_bili = box.size.height / box.size.width;
-                if (shanye_bili > 2.9 || (shanye_bili < 1.7 && shanye_bili > 1.5) || shanye_bili < 1.1 ||
-                    box.size.area() < 500)
-                    continue;
-                ellipse(Src, box, Scalar(255, 0, 255), 5, CV_AA);
-                int *nei_lunkuo = (int *) malloc(contours.size() * sizeof(int));
-                memset(nei_lunkuo, 0, contours.size() * sizeof(int));
-                //判断第一个内轮廓是否符合标准
-                if (contours[hierarchy[i][2]].size() >= 6) {
-                    RotatedRect first_box = fitEllipse(contours[hierarchy[i][2]]);
+        float shanye_bili = box.size.height/box.size.width;
+        if(shanye_bili>2.9||(shanye_bili<1.7&&shanye_bili>1.5)||shanye_bili<1.1||box.size.area()<500)continue;
+        ellipse(Src, box, Scalar(255,0,255), 5, CV_AA);
+        int * nei_lunkuo = (int *)malloc(contours.size()*sizeof(int));
+        memset(nei_lunkuo, 0, contours.size()*sizeof(int));
+        //判断第一个内轮廓是否符合标准
+        if(contours[hierarchy[i][2]].size()>=6){
+            RotatedRect first_box = fitEllipse(contours[hierarchy[i][2]]);
 
 //            cout<<"首个扇叶bili:"<<(float)first_box.size.height/(float)first_box.size.width<<endl;
 //            cout<<"首个面积比1:"<<box.size.area()/first_box.size.area()<<endl;
 //            cout<<"首个轮廓面积："<<(Src.cols*Src.rows)/box.size.area()<<endl;
-                    if (box.size.area() / first_box.size.area() < 10)
-                        *(nei_lunkuo + hierarchy[i][2]) = 1;
-                }
-                int j = hierarchy[i][2];
-                while (hierarchy[j][0] != -1) {
-                    if (contours[hierarchy[j][0]].size() < 6) {
-                        j = hierarchy[j][0];
-                        continue;
-                    }
-                    RotatedRect box2 = fitEllipse(contours[hierarchy[j][0]]);
-                    if (box.size.area() / box2.size.area() > 10) {
-                        j = hierarchy[j][0];
-                        continue;
-                    }
-                    *(nei_lunkuo + hierarchy[j][0]) = 1;
-                    j = hierarchy[j][0];
-                }
-                int z = hierarchy[i][2];
-                while (hierarchy[z][1] != -1) {
-                    if (contours[hierarchy[z][1]].size() < 6) {
-                        z = hierarchy[z][1];
-                        continue;
-                    }
-                    RotatedRect box2 = fitEllipse(contours[hierarchy[j][0]]);
-                    if (box.size.area() / box2.size.area() > 10) {
-                        z = hierarchy[z][1];
-                        continue;
-                    }
-                    if (box.size.area() / box2.size.area() > 7)continue;
-                    *(nei_lunkuo + hierarchy[z][1]) = 1;
-                    z = hierarchy[z][1];
-                }
-                int num = 0;
-                for (int t = 0; t < contours.size(); t++) {
-                    if (*(nei_lunkuo + t) == 1) {
-                        num++;
-                    }
-                }
-//        cout<<"内轮廓数量:"<<num<<endl;
-                if (num == 1) {
-                    success = true;
-                    if (contours[hierarchy[i][2]].size() < 6)continue;
-                    RotatedRect box_buff = fitEllipse(contours[hierarchy[i][2]]);
-                    if (box_buff.angle < 5 || box_buff.angle > 175) {
-                        if (box.angle > 5 && box.angle < 175)continue;
-                    } else {
-                        if (!((tan(box_buff.angle * PI / 180) * tan(box.angle * PI / 180) + 1) < 0.3 ||
-                              (box_buff.angle - box.angle) < 5))
-                            continue;
-                    }
-//            cout<<"轮廓面积最终比："<<(Src.cols*Src.rows)/box_buff.size.area()<<endl;
-                    box_buffs.push_back(box_buff);
-                    ellipse(Src, box_buff, Scalar(255, 0, 0), 5, CV_AA);
-                }
-                free(nei_lunkuo);
-                if (num == 2) {
-                    if (contours[hierarchy[i][2]].size() < 6)continue;
-                    RotatedRect box = fitEllipse(contours[hierarchy[i][2]]);
-
-                    ellipse(dst, box, Scalar(0, 255, 0), 5, CV_AA);
-                    if (hierarchy[hierarchy[i][2]][0] != -1) {
-                        if (contours[hierarchy[hierarchy[i][2]][0]].size() < 6)continue;
-                        RotatedRect box = fitEllipse(contours[hierarchy[hierarchy[i][2]][0]]);
-
-                        ellipse(dst, box, Scalar(0, 0, 255), 5, CV_AA);
-                    }
-                }
-            }
-
+            if(box.size.area()/first_box.size.area()<10)
+                *(nei_lunkuo + hierarchy[i][2]) = 1;
         }
+        int j = hierarchy[i][2];
+        while(hierarchy[j][0]!=-1){
+            if(contours[hierarchy[j][0]].size()<6){
+                j = hierarchy[j][0];
+                continue;
+            }
+            RotatedRect box2 = fitEllipse(contours[hierarchy[j][0]]);
+            if(box.size.area()/box2.size.area()>10){
+                j = hierarchy[j][0];
+                continue;
+            }
+            *(nei_lunkuo + hierarchy[j][0]) = 1;
+            j = hierarchy[j][0];
+        }
+        int z = hierarchy[i][2];
+        while(hierarchy[z][1]!=-1){
+            if(contours[hierarchy[z][1]].size()<6){
+                z = hierarchy[z][1];
+                continue;
+            }
+            RotatedRect box2 = fitEllipse(contours[hierarchy[j][0]]);
+            if(box.size.area()/box2.size.area()>10){
+                z = hierarchy[z][1];
+                continue;
+            }
+            if(box.size.area()/box2.size.area()>7)continue;
+            *(nei_lunkuo + hierarchy[z][1]) = 1;
+            z = hierarchy[z][1];
+        }
+        int num = 0;
+        for(int t = 0;t<contours.size();t++){
+            if(*(nei_lunkuo + t) == 1){
+                num++;
+            }
+        }
+//        cout<<"内轮廓数量:"<<num<<endl;
+        if(num == 1){
+            success = true;
+            if(contours[hierarchy[i][2]].size()<6)continue;
+            RotatedRect box_buff = fitEllipse(contours[hierarchy[i][2]]);
+            if(box_buff.angle<5||box_buff.angle>175){
+                if(box.angle>5&&box.angle<175)continue;
+            }else{
+                if(!((tan(box_buff.angle*PI/180)*tan(box.angle*PI/180) + 1)<0.3||(box_buff.angle - box.angle)<5))continue;
+            }
+//            cout<<"轮廓面积最终比："<<(Src.cols*Src.rows)/box_buff.size.area()<<endl;
+            box_buffs.push_back(box_buff);
+            ellipse(Src, box_buff, Scalar(255,0,0), 5, CV_AA);
+        }
+        free(nei_lunkuo);
+//        if(num == 2){
+//            if(contours[hierarchy[i][2]].size()<6)continue;
+//            RotatedRect box = fitEllipse(contours[hierarchy[i][2]]);
+
+//            ellipse(dst, box, Scalar(0,255,0), 5, CV_AA);
+//            if(hierarchy[hierarchy[i][2]][0] != -1){
+//                if(contours[hierarchy[hierarchy[i][2]][0]].size()<6)continue;
+//                RotatedRect box = fitEllipse(contours[hierarchy[hierarchy[i][2]][0]]);
+
+//                ellipse(dst, box, Scalar(0,0,255), 5, CV_AA);
+//            }
+//        }
+
     }
+//    cout<<"完成"<<endl;
     imshow("绘制ing",Src);
-    //cout<<"box_buffs.size()"<<box_buffs.size()<<endl;
+//    //保存录像
+//    outputVideo<<dst;
+//    if(!success)
+//        waitKey();
     return box_buffs;
 }
 
@@ -256,4 +246,3 @@ RotatedRect FindBuff::GetShootBuff(vector<RotatedRect> box_buffs,Mat Src){
     free(grade);
     return box_buffs[max_xuhao];
 }
-
