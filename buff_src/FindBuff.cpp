@@ -127,12 +127,14 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst){
     //寻找全部轮廓,用于计算内轮廓数量
     findContours(dst,contours,hierarchy,CV_RETR_TREE,CV_CHAIN_APPROX_NONE);
     bool success = false;                               //记录是否成功找到符合要求扇叶
+
     for(size_t i = 0;i<hierarchy.size();i++){
         if(hierarchy[i][2] == -1)continue;
         if(contours[i].size()<6)continue;
         RotatedRect box = fitEllipse(contours[i]);
 
         float shanye_bili = box.size.height/box.size.width;
+        float shanye_area=box.size.height*box.size.height;
 
         if(shanye_bili>2.9||(shanye_bili<1.7&&shanye_bili>1.5)||shanye_bili<1.1||box.size.area()<500)continue;
         ellipse(Src, box, Scalar(255,0,255), 5, CV_AA);
