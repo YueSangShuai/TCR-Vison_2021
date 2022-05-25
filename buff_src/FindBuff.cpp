@@ -92,6 +92,8 @@ void FindBuff::PreDelBuff(Mat Src, Mat &dst){
     cv::Mat gray_element=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(7,7));
     dilate(dst,dst,gray_element);
     erode(dst,dst,gray_element);
+    cv::Mat gray_element2=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(3,3));
+    dilate(dst,dst,gray_element2);
     imshow("灰度二值化",dst);
 //    vector<Mat> spli;
     Mat hsv;
