@@ -22,10 +22,10 @@ uint8_t rRadius=20;
  * @return 返回大符识别矩形
  * @remark 大符识别接口,传入当前帧图像,进行图像处理和寻找目标,返回最终待击打矩形,搭配相应滤光片使用使图像更稳定
  */
-RM_BuffData* FindBuff::BuffModeSwitch(Mat Src){
+RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     Mat dst;
     RM_BuffData Buff;
-    PreDelBuff(Src,dst);
+    PreDelBuff(Src,dst,color);
     //imshow("Src",Src);
 //    Mat temp;
 //    temp= rgbtohsv(Src,_color);
@@ -93,8 +93,8 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src){
  * @param dst
  * @return
  */
-void FindBuff::PreDelBuff(Mat Src, Mat &dst){
-    double t = (double)cvGetTickCount();            //计时
+void FindBuff::PreDelBuff(Mat Src, Mat &dst,int color){
+double t = (double)cvGetTickCount();            //计时
 //    cvtColor(Src,dst,CV_RGB2GRAY);
 //    threshold(dst,dst,40,255,CV_THRESH_BINARY);
 //    cv::Mat gray_element=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(7,7));
@@ -116,27 +116,50 @@ void FindBuff::PreDelBuff(Mat Src, Mat &dst){
 //    Mat element=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(3,3));
 //    erode(dst,dst,element);
 
-
-    Mat channels[3],mid,bin;
-    split(Src,channels);
-    //衰减蓝色通道
-    for(int i=0;i<Src.cols*Src.rows;i++)
-    {
-        channels[2].data[i]*=(1-blueDecay);
-    }
-    //红通道-蓝通道
-    subtract(channels[2],channels[0],mid);
-    threshold(mid,bin,binaryThreshold,255,THRESH_BINARY);
-    Mat element = getStructuringElement(MORPH_ELLIPSE,Point(dilateKernelSize,dilateKernelSize));
-    dilate(bin,mid,element);
-    Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(7,7));
-    morphologyEx(mid,bin,MORPH_CLOSE,kernel);
-    dst=bin;
-    imshow("Src",dst);
-    t=(double)cvGetTickCount()-t;
-    t = t/(cvGetTickFrequency()*1000);                                //t2为一帧的运行时间,也是单位时间
-    printf("used time is %gms\n",t);
+if(color==0){
+Mat channels[3],mid,bin;
+split(Src,channels);
+//衰减蓝色通道
+for(int i=0;i<Src.cols*Src.rows;i++)
+{
+channels[2].data[i]*=(1-blueDecay);
+}
+//红通道-蓝通道
+subtract(channels[2],channels[0],mid);
+threshold(mid,bin,binaryThreshold,255,THRESH_BINARY);
+Mat element = getStructuringElement(MORPH_ELLIPSE,Point(dilateKernelSize,dilateKernelSize));
+dilate(bin,mid,element);
+Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(7,7));
+morphologyEx(mid,bin,MORPH_CLOSE,kernel);
+dst=bin;
+imshow("Src",dst);
+t=(double)cvGetTickCount()-t;
+t = t/(cvGetTickFrequency()*1000);                                //t2为一帧的运行时间,也是单位时间
+printf("used time is %gms\n",t);
 //    imshow("分割",dst);
+}else{
+Mat channels[3],mid,bin;
+split(Src,channels);
+//衰减蓝色通道
+for(int i=0;i<Src.cols*Src.rows;i++)
+{
+channels[0].data[i]*=(1-blueDecay);
+}
+//红通道-蓝通道
+subtract(channels[0],channels[2],mid);
+threshold(mid,bin,binaryThreshold,255,THRESH_BINARY);
+Mat element = getStructuringElement(MORPH_ELLIPSE,Point(dilateKernelSize,dilateKernelSize));
+dilate(bin,mid,element);
+Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(7,7));
+morphologyEx(mid,bin,MORPH_CLOSE,kernel);
+dst=bin;
+imshow("Src",dst);
+t=(double)cvGetTickCount()-t;
+t = t/(cvGetTickFrequency()*1000);                                //t2为一帧的运行时间,也是单位时间
+printf("used time is %gms\n",t);
+//    imshow("分割",dst);
+}
+
 
 }
 
@@ -331,12 +354,12 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
     }
 
 //    cout<<"完成"<<endl;
-      imshow("绘制ing", Src);
+    imshow("绘制ing", Src);
 //    //保存录像
 //    outputVideo<<dst;
 //    if(!success)
 //        waitKey();
-        return box_buffs;
+    return box_buffs;
 
 }
 /**

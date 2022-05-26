@@ -19,7 +19,7 @@ RemoteController::RemoteController() {
 // 从下位机接收数据
 void RemoteController::paraGetCar() {
     while (1) {
-    int mode = 2;
+    int mode = 0;
 	float pitch = 0;
 	float yaw = 0;
 	float ShootSpeed = 0;
@@ -36,7 +36,7 @@ void RemoteController::paraGetCar() {
                 GetCar.model_ = BUFF;
             else if (mode == 1)
                 GetCar.model_ = DAHENG;
-            cout << "-------------GetCar.model_=" << mode << endl;
+//            cout << "-------------GetCar.model_=" << mode << endl;
             double timeing = ((double)getTickCount() - BeginTime) / getTickFrequency();
             cout<<timeing;
             GetCar.BeginToNowTime = timeing * 1000.0;
@@ -44,7 +44,7 @@ void RemoteController::paraGetCar() {
                 GetCar.c = BLUE;
             else
                 GetCar.c = RED;
-
+        cout << "-------------GetCar.color_=" << col << endl;
             // 挂起资源锁
             reciveRes.lock();
             getStm32.pitch = GetCar.pitch;

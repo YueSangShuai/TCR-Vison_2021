@@ -4,13 +4,13 @@
 
 class FindBuff{
 private:
-    void PreDelBuff(Mat Src, Mat &dst);
+    void PreDelBuff(Mat Src, Mat &dst,int color);
     vector<RotatedRect> FindBestBuff(Mat Src,Mat & dst);
     RotatedRect GetShootBuff(vector<RotatedRect> box_buffs,Mat Src);
     Point2f circle_center;
 
 public:
-    RM_BuffData* BuffModeSwitch(Mat Src);
+    RM_BuffData* BuffModeSwitch(Mat Src,int color);
     Point2f getCircleCenter(){
         return circle_center;
     }

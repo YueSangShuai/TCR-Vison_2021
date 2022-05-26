@@ -86,6 +86,8 @@ void ImageProcess::ImageProducter() {
         Src.ReciveStm32.yaw = getStm32.yaw;
         Src.ReciveStm32.ShootSpeed = getStm32.ShootSpeed;
         Src.mode = getStm32.model_;
+        Src.ReciveStm32.c=getStm32.c;
+        cout<<"颜色为:"<<Src.ReciveStm32.c<<endl;
         if (Src.mode == last_model && USE_BUFFER == false)
         {
             USE_BUFFER = false;
@@ -243,7 +245,7 @@ void ImageProcess::ImageConsumer() {
         else if (Image[(ImageIndex) % BUFFER].mode == BUFF){          // 能量机关(BUFF模式)
             float buff_pitch,buff_yaw;
             FindBuff BuffDetector;
-            RM_BuffData *Buffs = BuffDetector.BuffModeSwitch(Image[(ImageIndex) % BUFFER].SrcImage);
+            RM_BuffData *Buffs = BuffDetector.BuffModeSwitch(Image[(ImageIndex) % BUFFER].SrcImage,Image[(ImageIndex) % BUFFER].ReciveStm32.c);
             if (Buffs != (RM_BuffData *) -1) {
                 BuffAngleSolver BuffAngleData;
                 if (is_first_set == false) {

@@ -189,11 +189,11 @@ void SerialPort::send_data(const struct serial_transmit_data& data)
 {
 #ifdef LINUX
     // if (data.size != write(fd, data.raw_data, data.size))
-    cout << "------------" << endl;
-    cout << data.raw_data << endl;
-    cout << data.size << endl;
-    cout << fd << endl;
-    cout << "------------" << endl;
+//    cout << "------------" << endl;
+//    cout << data.raw_data << endl;
+//    cout << data.size << endl;
+//    cout << fd << endl;
+//    cout << "------------" << endl;
     int in_ = write(fd, data.raw_data, data.size);
     cout << "in_" << in_ << endl;
     if (in_ != data.size)
