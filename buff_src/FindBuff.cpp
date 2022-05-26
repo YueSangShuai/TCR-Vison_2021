@@ -2,7 +2,7 @@
 /********************大符调试********************************/
 #define PI 3.14159
 #define BUFF_W_RATIO_H 1.9              //最终大符内轮廓长宽比
-#define BUFF_AREA_RATIO 640.0       //最终大符内轮廓面积与图片面积像素比
+#define BUFF_AREA_RATIO 710.0       //最终大符内轮廓面积与图片面积像素比
 #define BUFFER_BUFF_BOX 4             //大符内轮廓存储缓冲数量
 #define BUFF_CIRCLE_BOX    3             //圆形计算所需个数,应比总数量少1,最后一位为当前识别目标
 #define BUFF_MIN_DISTANCE 50             //两次记录最短间距
@@ -11,6 +11,10 @@
 /*************************************************************/
 RM_BuffData BuffBox[BUFFER_BUFF_BOX];       //存储最近几帧的大符信息
 int BuffNum = 0;
+
+double blueDecay=0.25;
+uint8_t dilateKernelSize=5;
+uint8_t binaryThreshold=100;
 /**
  * @brief FindBuff::BuffModeSwitch
  * @param Src
@@ -90,27 +94,44 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src){
  */
 void FindBuff::PreDelBuff(Mat Src, Mat &dst){
     double t = (double)cvGetTickCount();            //计时
-    cvtColor(Src,dst,CV_RGB2GRAY);
-    threshold(dst,dst,40,255,CV_THRESH_BINARY);
-    cv::Mat gray_element=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(7,7));
-    dilate(dst,dst,gray_element);
-    erode(dst,dst,gray_element);
-//    cv::Mat gray_element2=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(3,3));
+//    cvtColor(Src,dst,CV_RGB2GRAY);
+//    threshold(dst,dst,40,255,CV_THRESH_BINARY);
+//    cv::Mat gray_element=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(7,7));
 //    dilate(dst,dst,gray_element);
-    imshow("灰度二值化",dst);
-//    vector<Mat> spli;
-    Mat hsv;
-    Mat mask;
-    cvtColor(Src,hsv,CV_RGB2HSV);
-//    split(hsv,spli);
-    inRange(hsv, Scalar(0, 10, 46), Scalar(180, 60, 255), mask);
-    dilate(mask,mask,gray_element);
-//    imshow("mask",mask);
-    dst = dst - mask;
-    dilate(dst,dst,gray_element);
-    Mat element=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(3,3));
-    erode(dst,dst,element);
+//    erode(dst,dst,gray_element);
+////    cv::Mat gray_element2=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(3,3));
+////    dilate(dst,dst,gray_element);
+//    imshow("灰度二值化",dst);
+////    vector<Mat> spli;
+//    Mat hsv;
+//    Mat mask;
+//    cvtColor(Src,hsv,CV_RGB2HSV);
+////    split(hsv,spli);
+//    inRange(hsv, Scalar(0, 10, 46), Scalar(180, 60, 255), mask);
+//    dilate(mask,mask,gray_element);
+////    imshow("mask",mask);
+//    dst = dst - mask;
+//    dilate(dst,dst,gray_element);
+//    Mat element=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(3,3));
+//    erode(dst,dst,element);
 
+
+    Mat channels[3],mid,bin;
+    split(Src,channels);
+    //衰减蓝色通道
+    for(int i=0;i<Src.cols*Src.rows;i++)
+    {
+        channels[2].data[i]*=(1-blueDecay);
+    }
+    //红通道-蓝通道
+    subtract(channels[2],channels[0],mid);
+    threshold(mid,bin,binaryThreshold,255,THRESH_BINARY);
+    Mat element = getStructuringElement(MORPH_ELLIPSE,Point(dilateKernelSize,dilateKernelSize));
+    dilate(bin,mid,element);
+    Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(7,7));
+    morphologyEx(mid,bin,MORPH_CLOSE,kernel);
+    dst=bin;
+    imshow("Src",dst);
     t=(double)cvGetTickCount()-t;
     t = t/(cvGetTickFrequency()*1000);                                //t2为一帧的运行时间,也是单位时间
     printf("used time is %gms\n",t);
@@ -131,7 +152,7 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
     findContours(dst, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_NONE);
     bool success = false;                               //记录是否成功找到符合要求扇叶
 
-    for (size_t i = 0; i < hierarchy.size(); i++) {
+`   `    for (size_t i = 0; i < hierarchy.size(); i++) {
         if (hierarchy[i][2] == -1)continue;
         if (contours[i].size() < 6)continue;
         RotatedRect box = fitEllipse(contours[i]);
