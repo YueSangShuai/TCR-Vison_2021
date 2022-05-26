@@ -15,6 +15,7 @@ int BuffNum = 0;
 double blueDecay=0.25;
 uint8_t dilateKernelSize=5;
 uint8_t binaryThreshold=100;
+uint8_t rRadius=20;
 /**
  * @brief FindBuff::BuffModeSwitch
  * @param Src
@@ -152,7 +153,7 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
     findContours(dst, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_NONE);
     bool success = false;                               //记录是否成功找到符合要求扇叶
 
-`   `    for (size_t i = 0; i < hierarchy.size(); i++) {
+    for (size_t i = 0; i < hierarchy.size(); i++) {
         if (hierarchy[i][2] == -1)continue;
         if (contours[i].size() < 6)continue;
         RotatedRect box = fitEllipse(contours[i]);
@@ -246,14 +247,34 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
         vector<Point> possibleCenter;
         for (uint i = 0; i < contours.size(); i++) {
             int sub = hierarchy[i][2];
-            if (sub = -1)//有子轮廓
+            if (sub != -1)//有子轮廓
             {
+//                if(hierarchy[sub][0]==-1)//没有兄弟轮廓
+//                {
+//                    int area = contourArea(contours[sub]);//轮廓面积
+//                    RotatedRect rect = minAreaRect(contours[sub]);//轮廓外接矩形
+//                    auto mmp=rect.size;
+//                    float aspectRatio=mmp.height/mmp.width;
+//                    float areaRatio=area/(rect.size.width*rect.size.height);//面积比，用来衡量轮廓与矩形的相似度
+//                    if(aspectRatio>1)
+//                        aspectRatio=1/aspectRatio;
+//                    //qDebug()<<"面积:"<<area<<",长宽比:"<<aspectRatio<<",面积比:"<<areaRatio<<endl;
+//                    //TODO:确定实际装甲板面积、长宽比、面积占比
+//                    if(area>400 && aspectRatio<0.76 && areaRatio>0.75)
+//                    {
+//                        box_buffs.push_back(rect);
+//                        ellipse(Src, rect, Scalar(255, 0, 0), 5, CV_AA);
+//                    }
+//                    }
+            }else{
                 Point2f center;
                 float radius;
                 minEnclosingCircle(contours[i], center, radius);
+                //circle(Src,center,CV_AA,Scalar(255,0,0),8);
                 //半径需要具体调试
-                if (radius < 20 && radius > 8) {
+                if (radius < 100 && radius > 0) {
                     possibleCenter.push_back(center);
+                    //circle(Src,center,CV_AA,Scalar(255,0,0),8);
                 }
             }
         }
@@ -294,8 +315,8 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
                 //计算与目标装甲板中心的夹角
                 angle=acos((x4*x1+y1*y4)/dd1/d1)*57.3;
 
-                int minRadius=110;
-                int maxRadius=200;
+                int minRadius=50;
+                int maxRadius=100;
                 //根据半径范围和与短边（锤子柄）的角度筛选出中心R
                 if(d1>minRadius && d1 < maxRadius )
                 {
