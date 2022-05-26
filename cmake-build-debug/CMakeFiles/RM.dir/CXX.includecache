@@ -6,9 +6,13 @@
 
 #IncludeRegexTransform: 
 
-/home/rmtcr/RM/Thread/RemoteController.cpp
-../header/RemoteController.h
-/home/rmtcr/RM/header/RemoteController.h
+/home/rmtcr/RM/buff_include/FindBuff.h
+../header/General.h
+/home/rmtcr/RM/header/General.h
+
+/home/rmtcr/RM/buff_src/FindBuff.cpp
+../buff_include/FindBuff.h
+/home/rmtcr/RM/buff_include/FindBuff.h
 
 /home/rmtcr/RM/header/General.h
 iostream
@@ -18,37 +22,5 @@ opencv2/opencv.hpp
 math.h
 -
 mutex
--
-
-/home/rmtcr/RM/header/RemoteController.h
-General.h
-/home/rmtcr/RM/header/General.h
-serialport.h
-/home/rmtcr/RM/header/serialport.h
-
-/home/rmtcr/RM/header/serialport.h
-iostream
--
-General.h
-/home/rmtcr/RM/header/General.h
-cstdio
--
-cstdlib
--
-unistd.h
--
-sys/types.h
--
-sys/stat.h
--
-fcntl.h
--
-cerrno
--
-errno.h
--
-termios.h
--
-Windows.h
 -
 

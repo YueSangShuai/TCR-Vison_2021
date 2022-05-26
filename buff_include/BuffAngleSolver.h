@@ -22,18 +22,18 @@ private:
     Point3f GetBuffCenter(RM_BuffData * BestArmor);
     Point3f GetAveBuffCenter();
     Point3f GetNormalVector(Point3f new_vector,Point3f old_vector);
-    float ShootAdjust(float & x,float & y,float & z,float pitch,float yaw);
+    float ShootAdjust(double x, double y, double z, float pitch, float yaw);
     void BuffAngleSpeedFilter(float & AngleSpeed,KF_two Filter,CarData carDatas);
     Point3f GetShootPoistion(float angle,Point3f center,float r);
     void ChassisToPtz(RM_BuffData & BestArmor);
     Angle_t ComputeBuffShootTime(float tx, float ty, float distance,struct CarData CarDatas);
 
     //底盘usb
-    cv::Mat caremaMatrix = (cv::Mat_<float>(3, 3) <<
+    cv::Mat caremaMatrix = (cv::Mat_<double>(3, 3) <<
             1281.2415311337063031,-0.3089685211182275,654.0926382032376978,
     0,1283.0023551375293209,510.1706263660812510,
     0,0,1);
-    cv::Mat distCoeffs = (cv::Mat_<float>(1, 5) <<  -0.0728917229903051, -0.1316730024507187, -0.0024528112888193, -0.0006391130756001 ,0.0);
+    cv::Mat distCoeffs = (cv::Mat_<double>(1, 5) <<  -0.0728917229903051, -0.1316730024507187, -0.0024528112888193, -0.0006391130756001 ,0.0);
 
 
 public:

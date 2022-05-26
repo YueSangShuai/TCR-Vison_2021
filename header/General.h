@@ -290,4 +290,32 @@ inline double GetAngle(Point3f a,Point3f b,Point3f c){
     double angle = acos(angle_cos);
     return 180*angle/PI;
 }
+//像素坐标转世界坐标
+inline Point3f getWorldPoints(Point2f inPoints, Mat &rvec, Mat &tvec, Mat &cameraMatrix)
+{
+    //initialize parameter
+    Mat rotationMatrix;//3*3
+    Rodrigues(rvec,rotationMatrix);
+    double zConst = 0;//实际坐标系的距离，若工作平面与相机距离固定可设置为0
+    double s;
+
+    //获取图像坐标
+    cv::Mat imagePoint = (Mat_<double>(3,1)<<double(inPoints.x),double(inPoints.y),1);
+    // cv::Mat::ones(3, 1, cv::DataType<double>::type); //u,v,1
+    // imagePoint.at<double>(0, 0) = inPoints.x;
+    // imagePoint.at<double>(1, 0) = inPoints.y;
+
+    //计算比例参数S
+    cv::Mat tempMat, tempMat2;
+    tempMat = rotationMatrix.inv() * cameraMatrix.inv() * imagePoint;
+    tempMat2 = rotationMatrix.inv() * tvec;
+    s = zConst + tempMat2.at<double>(2, 0);
+    s /= tempMat.at<double>(2, 0);
+
+    //计算世界坐标
+    Mat wcPoint = rotationMatrix.inv() * (s * cameraMatrix.inv() * imagePoint - tvec);
+    Point3f worldPoint(wcPoint.at<double>(0, 0), wcPoint.at<double>(1, 0), wcPoint.at<double>(2, 0));
+    return worldPoint;
+}
+
 #endif //RM_GENERAL_H

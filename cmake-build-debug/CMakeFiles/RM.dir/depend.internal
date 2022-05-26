@@ -908,6 +908,8 @@ CMakeFiles/RM.dir/global/serialport.cpp.o
  /home/rmtcr/RM/header/General.h
  /home/rmtcr/RM/header/serialport.h
 CMakeFiles/RM.dir/main.cpp.o
+ ../buff_include/FindBuff.h
+ ../header/General.h
  /home/rmtcr/RM/header/AngleSolver_2.h
  /home/rmtcr/RM/header/Armor.h
  /home/rmtcr/RM/header/Filter.h

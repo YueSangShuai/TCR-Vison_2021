@@ -13,7 +13,8 @@ RM_BuffData BuffBox[BUFFER_BUFF_BOX];       //存储最近几帧的大符信息
 int BuffNum = 0;
 
 double blueDecay=0.25;
-uint8_t dilateKernelSize=5;
+uint8_t blue_dilateKernelSize=3;
+uint8_t red_dilateKernelSize=5;
 uint8_t binaryThreshold=100;
 uint8_t rRadius=20;
 /**
@@ -31,11 +32,11 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
 //    temp= rgbtohsv(Src,_color);
 //    vector<RotatedRect> BuffClump = FindBestBuff(Src,temp);
     vector<RotatedRect> BuffClump = FindBestBuff(Src,dst);
-    if(BuffClump.size()!=0){
-        Point2f center=BuffClump[0].center;
-        cout<<"center:"<<center;
-        circle(Src,center,2,Scalar(0,255,0));
-    }
+//    if(BuffClump.size()!=0){
+//        Point2f center=BuffClump[0].center;
+//        cout<<"center:"<<center;
+//        circle(Src,center,2,Scalar(0,255,0));
+//    }
     if(BuffClump.size()<=0){
         cout<<"当前大符未识别到目标";
         return (RM_BuffData*)-1;
@@ -47,7 +48,7 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     Buff.point[2] = Point2f(BuffObject.center.x + BuffObject.size.width/2,BuffObject.center.y + BuffObject.size.height/2);
     Buff.point[3] = Point2f(BuffObject.center.x - BuffObject.size.width/2,BuffObject.center.y + BuffObject.size.height/2);
     Buff.box = BuffObject;
-
+    Buff.circle_center=this->circle_center;
     //存入数组,进入分析
     if(BuffNum == 0){
         BuffNum++;
@@ -84,6 +85,7 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     }
     if(BuffNum<3)
         return  (RM_BuffData*)-1;
+    //circle(Src,circle_center,CV_AA,Scalar(255,0,0),5);
     return BuffBox;
 }
 
@@ -116,18 +118,19 @@ double t = (double)cvGetTickCount();            //计时
 //    Mat element=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(3,3));
 //    erode(dst,dst,element);
 
-if(color==0){
+if(color==2)
+{
 Mat channels[3],mid,bin;
 split(Src,channels);
 //衰减蓝色通道
 for(int i=0;i<Src.cols*Src.rows;i++)
 {
-channels[2].data[i]*=(1-blueDecay);
+channels[0].data[i]*=(1-blueDecay);
 }
 //红通道-蓝通道
 subtract(channels[2],channels[0],mid);
 threshold(mid,bin,binaryThreshold,255,THRESH_BINARY);
-Mat element = getStructuringElement(MORPH_ELLIPSE,Point(dilateKernelSize,dilateKernelSize));
+Mat element = getStructuringElement(MORPH_ELLIPSE,Point(red_dilateKernelSize,red_dilateKernelSize));
 dilate(bin,mid,element);
 Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(7,7));
 morphologyEx(mid,bin,MORPH_CLOSE,kernel);
@@ -137,7 +140,8 @@ t=(double)cvGetTickCount()-t;
 t = t/(cvGetTickFrequency()*1000);                                //t2为一帧的运行时间,也是单位时间
 printf("used time is %gms\n",t);
 //    imshow("分割",dst);
-}else{
+}
+else if(color==1){
 Mat channels[3],mid,bin;
 split(Src,channels);
 //衰减蓝色通道
@@ -145,10 +149,10 @@ for(int i=0;i<Src.cols*Src.rows;i++)
 {
 channels[0].data[i]*=(1-blueDecay);
 }
-//红通道-蓝通道
+//蓝通道-红通道
 subtract(channels[0],channels[2],mid);
 threshold(mid,bin,binaryThreshold,255,THRESH_BINARY);
-Mat element = getStructuringElement(MORPH_ELLIPSE,Point(dilateKernelSize,dilateKernelSize));
+Mat element = getStructuringElement(MORPH_ELLIPSE,Point(blue_dilateKernelSize,blue_dilateKernelSize));
 dilate(bin,mid,element);
 Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(7,7));
 morphologyEx(mid,bin,MORPH_CLOSE,kernel);
@@ -235,7 +239,7 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
                 num++;
             }
         }
-        cout << "内轮廓数量:" << num << endl;
+ //       cout << "内轮廓数量:" << num << endl;
         if (num == 1) {
             success = true;
             if (contours[hierarchy[i][2]].size() < 6)continue;
@@ -272,30 +276,14 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
             int sub = hierarchy[i][2];
             if (sub != -1)//有子轮廓
             {
-//                if(hierarchy[sub][0]==-1)//没有兄弟轮廓
-//                {
-//                    int area = contourArea(contours[sub]);//轮廓面积
-//                    RotatedRect rect = minAreaRect(contours[sub]);//轮廓外接矩形
-//                    auto mmp=rect.size;
-//                    float aspectRatio=mmp.height/mmp.width;
-//                    float areaRatio=area/(rect.size.width*rect.size.height);//面积比，用来衡量轮廓与矩形的相似度
-//                    if(aspectRatio>1)
-//                        aspectRatio=1/aspectRatio;
-//                    //qDebug()<<"面积:"<<area<<",长宽比:"<<aspectRatio<<",面积比:"<<areaRatio<<endl;
-//                    //TODO:确定实际装甲板面积、长宽比、面积占比
-//                    if(area>400 && aspectRatio<0.76 && areaRatio>0.75)
-//                    {
-//                        box_buffs.push_back(rect);
-//                        ellipse(Src, rect, Scalar(255, 0, 0), 5, CV_AA);
-//                    }
-//                    }
+
             }else{
                 Point2f center;
                 float radius;
                 minEnclosingCircle(contours[i], center, radius);
                 //circle(Src,center,CV_AA,Scalar(255,0,0),8);
                 //半径需要具体调试
-                if (radius < 100 && radius > 0) {
+                if (radius < 20 && radius > 5) {
                     possibleCenter.push_back(center);
                     //circle(Src,center,CV_AA,Scalar(255,0,0),8);
                 }
@@ -339,14 +327,14 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
                 angle=acos((x4*x1+y1*y4)/dd1/d1)*57.3;
 
                 int minRadius=50;
-                int maxRadius=100;
+                int maxRadius=200;
                 //根据半径范围和与短边（锤子柄）的角度筛选出中心R
                 if(d1>minRadius && d1 < maxRadius )
                 {
                     Mat debug=src.clone();
                     circle_center=p;
                     circle(Src,p,CV_AA,Scalar(255,0,0),8);
-                    imshow("绘制ing",Src);
+                    //imshow("绘制ing",Src);
                     break;
                 }
             }

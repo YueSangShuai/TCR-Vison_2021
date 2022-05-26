@@ -907,6 +907,8 @@ CMakeFiles/RM.dir/global/serialport.cpp.o: ../global/serialport.cpp
 CMakeFiles/RM.dir/global/serialport.cpp.o: ../header/General.h
 CMakeFiles/RM.dir/global/serialport.cpp.o: ../header/serialport.h
 
+CMakeFiles/RM.dir/main.cpp.o: ../buff_include/FindBuff.h
+CMakeFiles/RM.dir/main.cpp.o: ../header/General.h
 CMakeFiles/RM.dir/main.cpp.o: ../header/AngleSolver_2.h
 CMakeFiles/RM.dir/main.cpp.o: ../header/Armor.h
 CMakeFiles/RM.dir/main.cpp.o: ../header/Filter.h

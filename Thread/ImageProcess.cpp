@@ -106,6 +106,7 @@ void ImageProcess::ImageProducter() {
         }
         cout << "得到收数时间" << getStm32.BeginToNowTime << endl;
         cout<< "收数pitch:" << Src.ReciveStm32.pitch << "    yaw:" << Src.ReciveStm32.yaw << "   射速:" << getStm32.ShootSpeed << endl << endl;
+        cout<<"颜色:"<<Src.ReciveStm32.c<<endl;
         // 解锁
         reciveRes.unlock();
 
@@ -258,6 +259,7 @@ void ImageProcess::ImageConsumer() {
                         line(Image[(ImageIndex) % BUFFER].SrcImage, Buffs[3].point[i % 4], Buffs[3].point[(i + 1) % 4],
                              Scalar(0, 0, 255), 4, 4);
                     }
+                    //circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].circle_center,CV_AA,Scalar(255,0,0),3);
                     buff_pitch=-Buffs[3].pitch;
                     buff_yaw=-Buffs[3].yaw;
                     char test[100];

@@ -23,7 +23,7 @@ void RemoteController::paraGetCar() {
 	float pitch = 0;
 	float yaw = 0;
 	float ShootSpeed = 0;
-	int col = 0;
+	int col = 1;
 	if (fd != 0)
 	{
 	    cout << "串口开始读取数据" << endl;
@@ -32,6 +32,11 @@ void RemoteController::paraGetCar() {
             GetCar.pitch = pitch;
             GetCar.yaw = yaw;
             GetCar.ShootSpeed = ShootSpeed;
+            if(GetCar.c==RED) {
+                col=1;
+            }else if(GetCar.c=BLUE){
+                col=2;
+            }
             if (mode == 2)
                 GetCar.model_ = BUFF;
             else if (mode == 1)
