@@ -1,4 +1,8 @@
 ﻿#include"../buff_include/FindBuff.h"
+#include "../DrawCurve/DraCurve.h"
+#include <fstream>   // 对文件输入输出
+#include <iostream>  //对屏幕上输入输出
+
 /********************大符调试********************************/
 #define PI 3.14159
 #define BUFF_W_RATIO_H 1.9              //最终大符内轮廓长宽比
@@ -8,10 +12,10 @@
 #define BUFF_MIN_DISTANCE 50             //两次记录最短间距
 
 #define G 9.80665
+DrawCurve draw;
 /*************************************************************/
 RM_BuffData BuffBox[BUFFER_BUFF_BOX];       //存储最近几帧的大符信息
 int BuffNum = 0;
-
 double blueDecay=0.25;
 uint8_t blue_dilateKernelSize=5;
 uint8_t red_dilateKernelSize=5;
@@ -37,6 +41,8 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
 //        cout<<"center:"<<center;
 //        circle(Src,center,2,Scalar(0,255,0));
 //    }
+
+
     if(BuffClump.size()<=0){
         cout<<"当前大符未识别到目标";
         return (RM_BuffData*)-1;
@@ -49,7 +55,7 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     Buff.point[3] = Point2f(BuffObject.center.x - BuffObject.size.width/2,BuffObject.center.y + BuffObject.size.height/2);
     Buff.box = BuffObject;
     Buff.circle_center=this->circle_center;
-    getCenterAngle(Buff.circle_center,Buff.box.center);
+
     //存入数组,进入分析
     if(BuffNum == 0){
         BuffNum++;
@@ -171,6 +177,7 @@ printf("used time is %gms\n",t);
 /**
  * @brief FindBuff::FindBestBuff
  * @param Src
+ * @param color
  * @return
  */
 vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
@@ -379,7 +386,12 @@ RotatedRect FindBuff::GetShootBuff(vector<RotatedRect> box_buffs,Mat Src){
     free(grade);
     return box_buffs[max_xuhao];
 }
-
+/**
+ * @brief FindBuff::getCenterAngle
+ * @param circle_center
+ * @param center
+ * @return
+ */
 double FindBuff::getCenterAngle(Point2f circle_center, Point2f center) {
         double angle_recent;
         double angle_recent_2PI;

@@ -898,6 +898,7 @@ CMakeFiles/RM.dir/buff_src/BuffAngleSolver.cpp.o: /usr/include/eigen3/Eigen/src/
 CMakeFiles/RM.dir/buff_src/BuffAngleSolver.cpp.o: /usr/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h
 CMakeFiles/RM.dir/buff_src/BuffAngleSolver.cpp.o: /usr/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
 
+CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o: ../DrawCurve/DraCurve.h
 CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o: ../buff_include/FindBuff.h
 CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o: ../buff_src/FindBuff.cpp
 CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o: ../header/Filter.h
