@@ -61,6 +61,14 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     Buff.normalizedCenter=Point2f((Buff.box.center.x-Buff.circle_center.x),(Buff.box.center.y-Buff.circle_center.y));
     Buff.armoranle= myArctan(Buff.normalizedCenter);
     Buff.box = BuffObject;
+    double rotation= BuffBox[3].armoranle-BuffBox[2].armoranle;
+    if(rotation>0){
+        this->is_rotation=true;
+        cout<<"顺时针"<<endl;
+    }else{
+        this->is_rotation=false;
+        cout<<"逆时针"<<endl;
+    }
     double del_angle= GetAngle(Buff.circle_center,BuffBox[3].box.center,BuffBox[2].box.center);
     draw.InsertData(BuffBox[3].armoranle-BuffBox[2].armoranle);
     cout<<"del_angle"<<del_angle;

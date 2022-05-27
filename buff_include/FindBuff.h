@@ -8,11 +8,15 @@ private:
     RotatedRect GetShootBuff(vector<RotatedRect> box_buffs,Mat Src);
     double getCenterAngle(Point2f circle_center,Point2f center);
     Point2f circle_center;
+    bool is_rotation=true;
 
 public:
     RM_BuffData* BuffModeSwitch(Mat Src,int color);
     Point2f getCircleCenter(){
         return circle_center;
+    }
+    bool getrotation(){
+        return is_rotation;
     }
 };
 
