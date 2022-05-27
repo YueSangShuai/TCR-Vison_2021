@@ -466,6 +466,33 @@ Thread/RemoteController.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/Thread/RemoteController.cpp.s
 .PHONY : Thread/RemoteController.cpp.s
 
+buff_include/predict.o: buff_include/predict.cpp.o
+
+.PHONY : buff_include/predict.o
+
+# target to build an object file
+buff_include/predict.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/buff_include/predict.cpp.o
+.PHONY : buff_include/predict.cpp.o
+
+buff_include/predict.i: buff_include/predict.cpp.i
+
+.PHONY : buff_include/predict.i
+
+# target to preprocess a source file
+buff_include/predict.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/buff_include/predict.cpp.i
+.PHONY : buff_include/predict.cpp.i
+
+buff_include/predict.s: buff_include/predict.cpp.s
+
+.PHONY : buff_include/predict.s
+
+# target to generate assembly for a file
+buff_include/predict.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/buff_include/predict.cpp.s
+.PHONY : buff_include/predict.cpp.s
+
 buff_src/BuffAngleSolver.o: buff_src/BuffAngleSolver.cpp.o
 
 .PHONY : buff_src/BuffAngleSolver.o
@@ -646,6 +673,9 @@ help:
 	@echo "... Thread/RemoteController.o"
 	@echo "... Thread/RemoteController.i"
 	@echo "... Thread/RemoteController.s"
+	@echo "... buff_include/predict.o"
+	@echo "... buff_include/predict.i"
+	@echo "... buff_include/predict.s"
 	@echo "... buff_src/BuffAngleSolver.o"
 	@echo "... buff_src/BuffAngleSolver.i"
 	@echo "... buff_src/BuffAngleSolver.s"

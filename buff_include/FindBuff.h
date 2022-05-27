@@ -1,7 +1,6 @@
 ﻿#ifndef FINDBUFF_H
 #define FINDBUFF_H
 #include"../header/General.h"
-#include "../header/Filter.h"
 class FindBuff{
 private:
     void PreDelBuff(Mat Src, Mat &dst,int color);

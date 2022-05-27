@@ -16,6 +16,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/rmtcr/RM/DrawCurve/DraCurve.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/DrawCurve/DraCurve.cpp.o"
   "/home/rmtcr/RM/Thread/ImageProcess.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/Thread/ImageProcess.cpp.o"
   "/home/rmtcr/RM/Thread/RemoteController.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/Thread/RemoteController.cpp.o"
+  "/home/rmtcr/RM/buff_include/predict.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/buff_include/predict.cpp.o"
   "/home/rmtcr/RM/buff_src/BuffAngleSolver.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/buff_src/BuffAngleSolver.cpp.o"
   "/home/rmtcr/RM/buff_src/FindBuff.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o"
   "/home/rmtcr/RM/global/General.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/global/General.cpp.o"

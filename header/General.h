@@ -117,6 +117,8 @@ struct RM_BuffData{
     RotatedRect box;
     Point2f point[4];
     Point2f circle_center;
+    double armoranle;
+    Point2f normalizedCenter;
 };
 typedef enum{
     BUFF_FIRST_SHOOT,
@@ -316,5 +318,10 @@ inline Point3f getWorldPoints(Point2f &inPoints, Mat &rvec, Mat &tvec, Mat &came
     Mat wcPoint = rotationMatrix.inv() * (s * cameraMatrix.inv() * imagePoint - tvec);
     Point3f worldPoint(wcPoint.at<double>(0, 0), wcPoint.at<double>(1, 0), wcPoint.at<double>(2, 0));
     return worldPoint;
+}
+inline float myArctan(Point2f p)
+{
+    float angle = atan2(p.y,p.x);
+    return fmod(CV_2PI-angle,CV_2PI);
 }
 #endif //RM_GENERAL_H

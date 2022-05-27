@@ -11,6 +11,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/RM.dir/DrawCurve/DraCurve.cpp.o"
   "CMakeFiles/RM.dir/Thread/ImageProcess.cpp.o"
   "CMakeFiles/RM.dir/Thread/RemoteController.cpp.o"
+  "CMakeFiles/RM.dir/buff_include/predict.cpp.o"
   "CMakeFiles/RM.dir/buff_src/BuffAngleSolver.cpp.o"
   "CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o"
   "CMakeFiles/RM.dir/global/General.cpp.o"

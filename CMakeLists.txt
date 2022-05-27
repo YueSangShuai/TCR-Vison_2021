@@ -42,7 +42,7 @@ set(SOURCE_FILES main.cpp
         buff_include/BuffAngleSolver.h
         buff_src/FindBuff.cpp
         buff_src/BuffAngleSolver.cpp
-        DrawCurve/DraCurve.h DrawCurve/DraCurve.cpp)
+        DrawCurve/DraCurve.h DrawCurve/DraCurve.cpp buff_include/predict.cpp buff_src/predict.h)
 #µº»Îcereø‚
 find_package(Ceres REQUIRED)
 include_directories( ${CERES_INCLUDE_DIRS})

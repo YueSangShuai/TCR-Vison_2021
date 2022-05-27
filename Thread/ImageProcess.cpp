@@ -259,21 +259,21 @@ void ImageProcess::ImageConsumer() {
                         line(Image[(ImageIndex) % BUFFER].SrcImage, Buffs[3].point[i % 4], Buffs[3].point[(i + 1) % 4],
                              Scalar(0, 0, 255), 4, 4);
                     }
-                    //circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].circle_center,CV_AA,Scalar(255,0,0),3);
+                    circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].circle_center,CV_AA,Scalar(255,0,0),3);
                     buff_pitch=-Buffs[3].pitch;
                     buff_yaw=-Buffs[3].yaw;
                     char test[100];
-                    sprintf(test, "tz:%0.4f", Buffs[3].tz);
+                    sprintf(test, "angle:%0.4f", Buffs[3].armoranle*57.3);
                     cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test, cv::Point(10, 20),
                                 cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 8);
-                    sprintf(test, "tx:%0.4f", Buffs[3].tx);
-                    cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test,
-                                cv::Point(Image[(ImageIndex) % BUFFER].SrcImage.cols / 3, 20), cv::FONT_HERSHEY_SIMPLEX,
-                                1, cv::Scalar(255, 255, 255), 1, 8);
-                    sprintf(test, "ty:%0.4f", Buffs[3].ty);
-                    cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test,
-                                cv::Point(2 * Image[(ImageIndex) % BUFFER].SrcImage.cols / 3, 20),
-                                cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 8);
+//                    sprintf(test, "tx:%0.4f", Buffs[3].tx);
+//                    cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test,
+//                                cv::Point(Image[(ImageIndex) % BUFFER].SrcImage.cols / 3, 20), cv::FONT_HERSHEY_SIMPLEX,
+//                                1, cv::Scalar(255, 255, 255), 1, 8);
+//                    sprintf(test, "ty:%0.4f", Buffs[3].ty);
+//                    cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test,
+//                                cv::Point(2 * Image[(ImageIndex) % BUFFER].SrcImage.cols / 3, 20),
+//                                cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 8);
                     sprintf(test, "yaw:%0.4f ", Buffs[3].yaw);
                     cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test, cv::Point(10, 40),
                                 cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 8);

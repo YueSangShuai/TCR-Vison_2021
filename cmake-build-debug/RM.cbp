@@ -140,10 +140,16 @@
 		<Unit filename="/home/rmtcr/RM/buff_include/FindBuff.h">
 			<Option target="RM"/>
 		</Unit>
+		<Unit filename="/home/rmtcr/RM/buff_include/predict.cpp">
+			<Option target="RM"/>
+		</Unit>
 		<Unit filename="/home/rmtcr/RM/buff_src/BuffAngleSolver.cpp">
 			<Option target="RM"/>
 		</Unit>
 		<Unit filename="/home/rmtcr/RM/buff_src/FindBuff.cpp">
+			<Option target="RM"/>
+		</Unit>
+		<Unit filename="/home/rmtcr/RM/buff_src/predict.h">
 			<Option target="RM"/>
 		</Unit>
 		<Unit filename="/home/rmtcr/RM/global/General.cpp">

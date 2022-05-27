@@ -45,6 +45,7 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
 
     if(BuffClump.size()<=0){
         cout<<"当前大符未识别到目标";
+        this->circle_center=Point2f (0,0);
         return (RM_BuffData*)-1;
     }
 
@@ -52,10 +53,13 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     Buff.point[0] = Point2f(BuffObject.center.x - BuffObject.size.width/2,BuffObject.center.y - BuffObject.size.height/2);
     Buff.point[1] = Point2f(BuffObject.center.x + BuffObject.size.width/2,BuffObject.center.y - BuffObject.size.height/2);
     Buff.point[2] = Point2f(BuffObject.center.x + BuffObject.size.width/2,BuffObject.center.y + BuffObject.size.height/2);
-    Buff.point[3] = Point2f(BuffObject.center.x - BuffObject.size.width/2,BuffObject.center.y + BuffObject.size.height/2);
-    Buff.box = BuffObject;
-    Buff.circle_center=this->circle_center;
 
+    Buff.point[3] = Point2f(BuffObject.center.x - BuffObject.size.width/2,BuffObject.center.y + BuffObject.size.height/2);
+    Buff.circle_center=this->circle_center;
+    Buff.box.center=BuffObject.center;
+    Buff.normalizedCenter=Point2f((Buff.box.center.x-Buff.circle_center.x),(Buff.box.center.y-Buff.circle_center.y));
+    Buff.armoranle= myArctan(Buff.normalizedCenter);
+    Buff.box = BuffObject;
     //存入数组,进入分析
     if(BuffNum == 0){
         BuffNum++;
@@ -341,7 +345,7 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
                 {
                     Mat debug=src.clone();
                     circle_center=p;
-                    circle(Src,p,CV_AA,Scalar(255,0,0),8);
+                    //circle(Src,p,CV_AA,Scalar(255,0,0),8);
                     //imshow("绘制ing",Src);
                     break;
                 }
