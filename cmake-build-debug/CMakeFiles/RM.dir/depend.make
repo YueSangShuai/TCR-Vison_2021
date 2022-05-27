@@ -683,9 +683,6 @@ CMakeFiles/RM.dir/Thread/RemoteController.cpp.o: ../header/General.h
 CMakeFiles/RM.dir/Thread/RemoteController.cpp.o: ../header/RemoteController.h
 CMakeFiles/RM.dir/Thread/RemoteController.cpp.o: ../header/serialport.h
 
-CMakeFiles/RM.dir/buff_include/predict.cpp.o: ../buff_include/predict.cpp
-CMakeFiles/RM.dir/buff_include/predict.cpp.o: ../buff_src/predict.h
-
 CMakeFiles/RM.dir/buff_src/BuffAngleSolver.cpp.o: ../buff_include/BuffAngleSolver.h
 CMakeFiles/RM.dir/buff_src/BuffAngleSolver.cpp.o: ../buff_include/FindBuff.h
 CMakeFiles/RM.dir/buff_src/BuffAngleSolver.cpp.o: ../buff_src/BuffAngleSolver.cpp
@@ -905,6 +902,9 @@ CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o: ../DrawCurve/DraCurve.h
 CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o: ../buff_include/FindBuff.h
 CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o: ../buff_src/FindBuff.cpp
 CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o: ../header/General.h
+
+CMakeFiles/RM.dir/buff_src/predict.cpp.o: ../buff_include/predict.h
+CMakeFiles/RM.dir/buff_src/predict.cpp.o: ../buff_src/predict.cpp
 
 CMakeFiles/RM.dir/global/General.cpp.o: ../global/General.cpp
 CMakeFiles/RM.dir/global/General.cpp.o: ../header/General.h

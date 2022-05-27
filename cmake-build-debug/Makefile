@@ -466,33 +466,6 @@ Thread/RemoteController.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/Thread/RemoteController.cpp.s
 .PHONY : Thread/RemoteController.cpp.s
 
-buff_include/predict.o: buff_include/predict.cpp.o
-
-.PHONY : buff_include/predict.o
-
-# target to build an object file
-buff_include/predict.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/buff_include/predict.cpp.o
-.PHONY : buff_include/predict.cpp.o
-
-buff_include/predict.i: buff_include/predict.cpp.i
-
-.PHONY : buff_include/predict.i
-
-# target to preprocess a source file
-buff_include/predict.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/buff_include/predict.cpp.i
-.PHONY : buff_include/predict.cpp.i
-
-buff_include/predict.s: buff_include/predict.cpp.s
-
-.PHONY : buff_include/predict.s
-
-# target to generate assembly for a file
-buff_include/predict.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/buff_include/predict.cpp.s
-.PHONY : buff_include/predict.cpp.s
-
 buff_src/BuffAngleSolver.o: buff_src/BuffAngleSolver.cpp.o
 
 .PHONY : buff_src/BuffAngleSolver.o
@@ -546,6 +519,33 @@ buff_src/FindBuff.s: buff_src/FindBuff.cpp.s
 buff_src/FindBuff.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/buff_src/FindBuff.cpp.s
 .PHONY : buff_src/FindBuff.cpp.s
+
+buff_src/predict.o: buff_src/predict.cpp.o
+
+.PHONY : buff_src/predict.o
+
+# target to build an object file
+buff_src/predict.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/buff_src/predict.cpp.o
+.PHONY : buff_src/predict.cpp.o
+
+buff_src/predict.i: buff_src/predict.cpp.i
+
+.PHONY : buff_src/predict.i
+
+# target to preprocess a source file
+buff_src/predict.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/buff_src/predict.cpp.i
+.PHONY : buff_src/predict.cpp.i
+
+buff_src/predict.s: buff_src/predict.cpp.s
+
+.PHONY : buff_src/predict.s
+
+# target to generate assembly for a file
+buff_src/predict.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/buff_src/predict.cpp.s
+.PHONY : buff_src/predict.cpp.s
 
 global/General.o: global/General.cpp.o
 
@@ -673,15 +673,15 @@ help:
 	@echo "... Thread/RemoteController.o"
 	@echo "... Thread/RemoteController.i"
 	@echo "... Thread/RemoteController.s"
-	@echo "... buff_include/predict.o"
-	@echo "... buff_include/predict.i"
-	@echo "... buff_include/predict.s"
 	@echo "... buff_src/BuffAngleSolver.o"
 	@echo "... buff_src/BuffAngleSolver.i"
 	@echo "... buff_src/BuffAngleSolver.s"
 	@echo "... buff_src/FindBuff.o"
 	@echo "... buff_src/FindBuff.i"
 	@echo "... buff_src/FindBuff.s"
+	@echo "... buff_src/predict.o"
+	@echo "... buff_src/predict.i"
+	@echo "... buff_src/predict.s"
 	@echo "... global/General.o"
 	@echo "... global/General.i"
 	@echo "... global/General.s"

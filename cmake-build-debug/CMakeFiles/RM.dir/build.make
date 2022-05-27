@@ -297,18 +297,18 @@ CMakeFiles/RM.dir/DrawCurve/DraCurve.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RM.dir/DrawCurve/DraCurve.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rmtcr/RM/DrawCurve/DraCurve.cpp -o CMakeFiles/RM.dir/DrawCurve/DraCurve.cpp.s
 
-CMakeFiles/RM.dir/buff_include/predict.cpp.o: CMakeFiles/RM.dir/flags.make
-CMakeFiles/RM.dir/buff_include/predict.cpp.o: ../buff_include/predict.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rmtcr/RM/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/RM.dir/buff_include/predict.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/RM.dir/buff_include/predict.cpp.o -c /home/rmtcr/RM/buff_include/predict.cpp
+CMakeFiles/RM.dir/buff_src/predict.cpp.o: CMakeFiles/RM.dir/flags.make
+CMakeFiles/RM.dir/buff_src/predict.cpp.o: ../buff_src/predict.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rmtcr/RM/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/RM.dir/buff_src/predict.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/RM.dir/buff_src/predict.cpp.o -c /home/rmtcr/RM/buff_src/predict.cpp
 
-CMakeFiles/RM.dir/buff_include/predict.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RM.dir/buff_include/predict.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rmtcr/RM/buff_include/predict.cpp > CMakeFiles/RM.dir/buff_include/predict.cpp.i
+CMakeFiles/RM.dir/buff_src/predict.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RM.dir/buff_src/predict.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rmtcr/RM/buff_src/predict.cpp > CMakeFiles/RM.dir/buff_src/predict.cpp.i
 
-CMakeFiles/RM.dir/buff_include/predict.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RM.dir/buff_include/predict.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rmtcr/RM/buff_include/predict.cpp -o CMakeFiles/RM.dir/buff_include/predict.cpp.s
+CMakeFiles/RM.dir/buff_src/predict.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RM.dir/buff_src/predict.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rmtcr/RM/buff_src/predict.cpp -o CMakeFiles/RM.dir/buff_src/predict.cpp.s
 
 # Object files for target RM
 RM_OBJECTS = \
@@ -329,7 +329,7 @@ RM_OBJECTS = \
 "CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o" \
 "CMakeFiles/RM.dir/buff_src/BuffAngleSolver.cpp.o" \
 "CMakeFiles/RM.dir/DrawCurve/DraCurve.cpp.o" \
-"CMakeFiles/RM.dir/buff_include/predict.cpp.o"
+"CMakeFiles/RM.dir/buff_src/predict.cpp.o"
 
 # External object files for target RM
 RM_EXTERNAL_OBJECTS =
@@ -351,7 +351,7 @@ RM: CMakeFiles/RM.dir/DaHengCamera/DaHengCamera.cpp.o
 RM: CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o
 RM: CMakeFiles/RM.dir/buff_src/BuffAngleSolver.cpp.o
 RM: CMakeFiles/RM.dir/DrawCurve/DraCurve.cpp.o
-RM: CMakeFiles/RM.dir/buff_include/predict.cpp.o
+RM: CMakeFiles/RM.dir/buff_src/predict.cpp.o
 RM: CMakeFiles/RM.dir/build.make
 RM: /usr/local/lib/libopencv_dnn.so.3.4.2
 RM: /usr/local/lib/libopencv_objdetect.so.3.4.2

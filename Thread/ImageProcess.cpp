@@ -152,7 +152,7 @@ void ImageProcess::ImageConsumer() {
     #ifdef ANGLESOLVER
     // 使用相机
     // 设置基本参数
-    // angleSolver.setCameraParam("camera_params.xml", 1);
+    angleSolver.setCameraParam("camera_params.xml", 1);
     angleSolver.setArmorSize(SMALL_ARMOR, 135, 55);
     angleSolver.setArmorSize(BIG_ARMOR, 230, 55);
 #endif

@@ -2,7 +2,7 @@
 // Created by rmtcr on 2022/5/27.
 //
 
-#include "../buff_src/predict.h"
+#include "../buff_include/predict.h"
 //非线性拟合代价函数
 struct CURVE_FITTING_COST
 {

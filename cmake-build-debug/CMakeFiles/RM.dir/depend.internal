@@ -683,9 +683,6 @@ CMakeFiles/RM.dir/Thread/RemoteController.cpp.o
  /home/rmtcr/RM/header/General.h
  /home/rmtcr/RM/header/RemoteController.h
  /home/rmtcr/RM/header/serialport.h
-CMakeFiles/RM.dir/buff_include/predict.cpp.o
- /home/rmtcr/RM/buff_include/predict.cpp
- /home/rmtcr/RM/buff_src/predict.h
 CMakeFiles/RM.dir/buff_src/BuffAngleSolver.cpp.o
  /home/rmtcr/RM/buff_include/BuffAngleSolver.h
  /home/rmtcr/RM/buff_include/FindBuff.h
@@ -906,6 +903,9 @@ CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o
  /home/rmtcr/RM/buff_include/FindBuff.h
  /home/rmtcr/RM/buff_src/FindBuff.cpp
  /home/rmtcr/RM/header/General.h
+CMakeFiles/RM.dir/buff_src/predict.cpp.o
+ /home/rmtcr/RM/buff_include/predict.h
+ /home/rmtcr/RM/buff_src/predict.cpp
 CMakeFiles/RM.dir/global/General.cpp.o
  /home/rmtcr/RM/global/General.cpp
  /home/rmtcr/RM/header/General.h

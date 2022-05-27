@@ -88,7 +88,7 @@ struct CarData {
     double yaw = 0;         // 获取战车当前的yaw值
     float ShootSpeed = 16;  // 子弹射速
     bool IsBuffMode = false;
-    double BeginToNowTime = 0;      // 获取时间
+    double BeginToNowTime ;      // 获取时间
     Color c = RED;
     ImageGetMode model_ = BUFF;
 };
@@ -119,6 +119,7 @@ struct RM_BuffData{
     Point2f circle_center;
     double armoranle;
     Point2f normalizedCenter;
+    double timestamp=(double)cvGetTickCount();
 };
 typedef enum{
     BUFF_FIRST_SHOOT,

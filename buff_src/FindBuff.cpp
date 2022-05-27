@@ -60,6 +60,7 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     Buff.normalizedCenter=Point2f((Buff.box.center.x-Buff.circle_center.x),(Buff.box.center.y-Buff.circle_center.y));
     Buff.armoranle= myArctan(Buff.normalizedCenter);
     Buff.box = BuffObject;
+    //cout<<"time:"<<Buff.timestamp<<endl;
     //存入数组,进入分析
     if(BuffNum == 0){
         BuffNum++;
@@ -97,6 +98,7 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     if(BuffNum<3)
         return  (RM_BuffData*)-1;
     //circle(Src,circle_center,CV_AA,Scalar(255,0,0),5);
+    cout<<"del_time"<<BuffBox[3].timestamp-BuffBox[2].timestamp<<endl;
     return BuffBox;
 }
 
