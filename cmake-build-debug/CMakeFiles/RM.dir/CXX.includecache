@@ -19,6 +19,8 @@
 /home/rmtcr/RM/buff_include/FindBuff.h
 ../DrawCurve/DraCurve.h
 /home/rmtcr/RM/DrawCurve/DraCurve.h
+../header/General.h
+/home/rmtcr/RM/header/General.h
 fstream
 -
 iostream

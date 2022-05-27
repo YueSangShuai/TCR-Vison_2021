@@ -1,5 +1,6 @@
 ﻿#include"../buff_include/FindBuff.h"
 #include "../DrawCurve/DraCurve.h"
+#include "../header/General.h"
 #include <fstream>   // 对文件输入输出
 #include <iostream>  //对屏幕上输入输出
 
@@ -60,6 +61,9 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     Buff.normalizedCenter=Point2f((Buff.box.center.x-Buff.circle_center.x),(Buff.box.center.y-Buff.circle_center.y));
     Buff.armoranle= myArctan(Buff.normalizedCenter);
     Buff.box = BuffObject;
+    double del_angle= GetAngle(Buff.circle_center,BuffBox[3].box.center,BuffBox[2].box.center);
+    draw.InsertData(BuffBox[3].armoranle-BuffBox[2].armoranle);
+    cout<<"del_angle"<<del_angle;
     //cout<<"time:"<<Buff.timestamp<<endl;
     //存入数组,进入分析
     if(BuffNum == 0){
