@@ -13,6 +13,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/rmtcr/RM/Armor_recognition/findLights.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/Armor_recognition/findLights.cpp.o"
   "/home/rmtcr/RM/Armor_recognition/matchArmors.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/Armor_recognition/matchArmors.cpp.o"
   "/home/rmtcr/RM/DaHengCamera/DaHengCamera.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/DaHengCamera/DaHengCamera.cpp.o"
+  "/home/rmtcr/RM/DrawCurve/DraCurve.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/DrawCurve/DraCurve.cpp.o"
   "/home/rmtcr/RM/Thread/ImageProcess.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/Thread/ImageProcess.cpp.o"
   "/home/rmtcr/RM/Thread/RemoteController.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/Thread/RemoteController.cpp.o"
   "/home/rmtcr/RM/buff_src/BuffAngleSolver.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/buff_src/BuffAngleSolver.cpp.o"
@@ -26,6 +27,7 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/usr/include/eigen3"
+  "/usr/local/include/eigen3"
   ".././header"
   "/usr/local/include/opencv"
   )

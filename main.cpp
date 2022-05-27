@@ -3,7 +3,7 @@
 	* Details: 相机图像读取，图像处理，收发数线程初始化
 	* Remarks: 利用多线程异步处理图像的获取与处理步骤，提高cpu的利用率，提高程序运行速度，图像的获取与处理控制采用生产者和消费者的方法
 */
-
+#include"../DaHengCamera/DaHengCamera.h"
 #include <iostream>
 #include <thread>		// 线程
 #include "header/General.h"
@@ -85,14 +85,13 @@ int main()
     ImageProcess process;
     std::thread t1(&ImageProcess::ImageProducter, process);		// 创建图像生产线程
     std::thread t2(&ImageProcess::ImageConsumer, process);		// 创建图像消费线程
-    std::thread t4(&RemoteController::paraGetCar, Recive);		// 创建收数线程
-    std::thread t3(&RemoteController::paraReceiver, Send);		// 创建发数线程
-    t4.join();
-    t3.join();
+//    std::thread t4(&RemoteController::paraGetCar, Recive);		// 创建收数线程
+//    std::thread t3(&RemoteController::paraReceiver, Send);		// 创建发数线程
+//    t4.join();
+//    t3.join();
     t2.join();
     t1.join();
 
-    return 0;
 }
 
 void getData() {

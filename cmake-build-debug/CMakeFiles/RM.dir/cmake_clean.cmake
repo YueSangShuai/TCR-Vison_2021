@@ -8,6 +8,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/RM.dir/Armor_recognition/findLights.cpp.o"
   "CMakeFiles/RM.dir/Armor_recognition/matchArmors.cpp.o"
   "CMakeFiles/RM.dir/DaHengCamera/DaHengCamera.cpp.o"
+  "CMakeFiles/RM.dir/DrawCurve/DraCurve.cpp.o"
   "CMakeFiles/RM.dir/Thread/ImageProcess.cpp.o"
   "CMakeFiles/RM.dir/Thread/RemoteController.cpp.o"
   "CMakeFiles/RM.dir/buff_src/BuffAngleSolver.cpp.o"

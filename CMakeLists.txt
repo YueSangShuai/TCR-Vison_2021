@@ -42,10 +42,13 @@ set(SOURCE_FILES main.cpp
         buff_include/BuffAngleSolver.h
         buff_src/FindBuff.cpp
         buff_src/BuffAngleSolver.cpp
-        )
+        DrawCurve/DraCurve.h DrawCurve/DraCurve.cpp)
+#导入cere库
+find_package(Ceres REQUIRED)
+include_directories( ${CERES_INCLUDE_DIRS})
 add_executable(RM ${SOURCE_FILES} header/General.h header/Armor.h header/Filter.h header/AngleSolver_2.h header/ImageProcess.h header/RemoteController.h header/serialport.h Armor_recognition/LightBar.cpp Armor_recognition/findLights.cpp Armor_recognition/ArmorBox.cpp Armor_recognition/ArmorDetector.cpp Armor_recognition/ArmorNumClassifier.cpp Armor_recognition/matchArmors.cpp AngleSolver/Filter.cpp AngleSolver/AngleSolver_2.cpp global/serialport.cpp global/General.cpp Thread/ImageProcess.cpp Thread/RemoteController.cpp DaHengCamera/DaHengCamera.h DaHengCamera/DaHengCamera.cpp)
 # 链接Opencv库
-target_link_libraries(RM ${OpenCV_LIBS} gxiapi)
+target_link_libraries(RM ${OpenCV_LIBS} gxiapi ${CERES_LIBRARIES})
 
 # 大恒include files
 include_directories(./header)

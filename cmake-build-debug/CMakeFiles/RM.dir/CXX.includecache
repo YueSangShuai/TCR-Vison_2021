@@ -6,13 +6,13 @@
 
 #IncludeRegexTransform: 
 
-/home/rmtcr/RM/buff_include/FindBuff.h
+/home/rmtcr/RM/DrawCurve/DraCurve.cpp
+../DrawCurve/DraCurve.h
+/home/rmtcr/RM/DrawCurve/DraCurve.h
+
+/home/rmtcr/RM/DrawCurve/DraCurve.h
 ../header/General.h
 /home/rmtcr/RM/header/General.h
-
-/home/rmtcr/RM/buff_src/FindBuff.cpp
-../buff_include/FindBuff.h
-/home/rmtcr/RM/buff_include/FindBuff.h
 
 /home/rmtcr/RM/header/General.h
 iostream

@@ -291,7 +291,7 @@ inline double GetAngle(Point3f a,Point3f b,Point3f c){
     return 180*angle/PI;
 }
 //像素坐标转世界坐标
-inline Point3f getWorldPoints(Point2f inPoints, Mat &rvec, Mat &tvec, Mat &cameraMatrix)
+inline Point3f getWorldPoints(Point2f &inPoints, Mat &rvec, Mat &tvec, Mat &cameraMatrix)
 {
     //initialize parameter
     Mat rotationMatrix;//3*3
@@ -317,5 +317,4 @@ inline Point3f getWorldPoints(Point2f inPoints, Mat &rvec, Mat &tvec, Mat &camer
     Point3f worldPoint(wcPoint.at<double>(0, 0), wcPoint.at<double>(1, 0), wcPoint.at<double>(2, 0));
     return worldPoint;
 }
-
 #endif //RM_GENERAL_H

@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/include/eigen3 -I/home/rmtcr/RM/./header -isystem /usr/local/include/opencv
+CXX_INCLUDES = -I/usr/include/eigen3 -I/usr/local/include/eigen3 -I/home/rmtcr/RM/./header -isystem /usr/local/include/opencv
 
 CXX_FLAGS =  -std=c++11 -pthread -g -std=gnu++11
 

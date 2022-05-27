@@ -385,6 +385,33 @@ DaHengCamera/DaHengCamera.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/DaHengCamera/DaHengCamera.cpp.s
 .PHONY : DaHengCamera/DaHengCamera.cpp.s
 
+DrawCurve/DraCurve.o: DrawCurve/DraCurve.cpp.o
+
+.PHONY : DrawCurve/DraCurve.o
+
+# target to build an object file
+DrawCurve/DraCurve.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/DrawCurve/DraCurve.cpp.o
+.PHONY : DrawCurve/DraCurve.cpp.o
+
+DrawCurve/DraCurve.i: DrawCurve/DraCurve.cpp.i
+
+.PHONY : DrawCurve/DraCurve.i
+
+# target to preprocess a source file
+DrawCurve/DraCurve.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/DrawCurve/DraCurve.cpp.i
+.PHONY : DrawCurve/DraCurve.cpp.i
+
+DrawCurve/DraCurve.s: DrawCurve/DraCurve.cpp.s
+
+.PHONY : DrawCurve/DraCurve.s
+
+# target to generate assembly for a file
+DrawCurve/DraCurve.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/DrawCurve/DraCurve.cpp.s
+.PHONY : DrawCurve/DraCurve.cpp.s
+
 Thread/ImageProcess.o: Thread/ImageProcess.cpp.o
 
 .PHONY : Thread/ImageProcess.o
@@ -610,6 +637,9 @@ help:
 	@echo "... DaHengCamera/DaHengCamera.o"
 	@echo "... DaHengCamera/DaHengCamera.i"
 	@echo "... DaHengCamera/DaHengCamera.s"
+	@echo "... DrawCurve/DraCurve.o"
+	@echo "... DrawCurve/DraCurve.i"
+	@echo "... DrawCurve/DraCurve.s"
 	@echo "... Thread/ImageProcess.o"
 	@echo "... Thread/ImageProcess.i"
 	@echo "... Thread/ImageProcess.s"

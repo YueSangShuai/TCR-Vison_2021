@@ -1,4 +1,9 @@
 /home/rmtcr/clion-2021.1.1/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/rmtcr/RM
+-- Found installed version of Eigen: /usr/local/share/eigen3/cmake
+-- Found required Ceres dependency: Eigen version 3.3.7 in /usr/local/include/eigen3
+-- Found required Ceres dependency: glog
+-- Found required Ceres dependency: gflags
+-- Found Ceres version: 1.13.0 installed in: /usr/local with components: [LAPACK, SuiteSparse, SparseLinearAlgebraLibrary, CXSparse, SchurSpecializations, OpenMP]
 -- Configuring done
 -- Generating done
 -- Build files have been written to: /home/rmtcr/RM/cmake-build-debug

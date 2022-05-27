@@ -5,7 +5,7 @@
 		<Option title="RM"/>
 		<Option makefile_is_custom="1"/>
 		<Option compiler="gcc"/>
-		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\usr\;CMake Files\..\..\..\usr\local\;CMake Files\..\..\..\usr\local\share\;CMake Files\..\..\..\usr\local\share\OpenCV\;"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\usr\;CMake Files\..\..\..\usr\local\;CMake Files\..\..\..\usr\local\share\;CMake Files\..\..\..\usr\local\share\OpenCV\;CMake Files\..\..\..\usr\local\share\eigen3\;CMake Files\..\..\..\usr\local\share\eigen3\cmake\;CMake Files\..\..\..\usr\local\lib\;CMake Files\..\..\..\usr\local\lib\cmake\;CMake Files\..\..\..\usr\local\lib\cmake\Ceres\;"/>
 		<Build>
 			<Target title="all">
 				<Option working_dir="/home/rmtcr/RM/cmake-build-debug"/>
@@ -45,6 +45,7 @@
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/local/include/eigen3"/>
 					<Add directory="/home/rmtcr/RM/./header"/>
 					<Add directory="/usr/local/include/opencv"/>
 					<Add directory="/usr/include/c++/5"/>
@@ -71,6 +72,7 @@
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/local/include/eigen3"/>
 					<Add directory="/home/rmtcr/RM/./header"/>
 					<Add directory="/usr/local/include/opencv"/>
 					<Add directory="/usr/include/c++/5"/>
@@ -118,6 +120,12 @@
 			<Option target="RM"/>
 		</Unit>
 		<Unit filename="/home/rmtcr/RM/DaHengCamera/DaHengCamera.h">
+			<Option target="RM"/>
+		</Unit>
+		<Unit filename="/home/rmtcr/RM/DrawCurve/DraCurve.cpp">
+			<Option target="RM"/>
+		</Unit>
+		<Unit filename="/home/rmtcr/RM/DrawCurve/DraCurve.h">
 			<Option target="RM"/>
 		</Unit>
 		<Unit filename="/home/rmtcr/RM/Thread/ImageProcess.cpp">
@@ -182,6 +190,36 @@
 		</Unit>
 		<Unit filename="/home/rmtcr/RM/../../../usr/local/share/OpenCV/OpenCVModules.cmake">
 			<Option virtualFolder="CMake Files\..\..\..\usr\local\share\OpenCV\"/>
+		</Unit>
+		<Unit filename="/home/rmtcr/RM/../../../usr/local/share/eigen3/cmake/Eigen3Config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\share\eigen3\cmake\"/>
+		</Unit>
+		<Unit filename="/home/rmtcr/RM/../../../usr/local/share/eigen3/cmake/Eigen3ConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\share\eigen3\cmake\"/>
+		</Unit>
+		<Unit filename="/home/rmtcr/RM/../../../usr/local/share/eigen3/cmake/Eigen3Targets.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\share\eigen3\cmake\"/>
+		</Unit>
+		<Unit filename="/home/rmtcr/RM/../../../usr/local/lib/cmake/Ceres/CeresConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Ceres\"/>
+		</Unit>
+		<Unit filename="/home/rmtcr/RM/../../../usr/local/lib/cmake/Ceres/CeresConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Ceres\"/>
+		</Unit>
+		<Unit filename="/home/rmtcr/RM/../../../usr/local/lib/cmake/Ceres/CeresTargets-release.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Ceres\"/>
+		</Unit>
+		<Unit filename="/home/rmtcr/RM/../../../usr/local/lib/cmake/Ceres/CeresTargets.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Ceres\"/>
+		</Unit>
+		<Unit filename="/home/rmtcr/RM/../../../usr/local/lib/cmake/Ceres/FindEigen.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Ceres\"/>
+		</Unit>
+		<Unit filename="/home/rmtcr/RM/../../../usr/local/lib/cmake/Ceres/FindGflags.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Ceres\"/>
+		</Unit>
+		<Unit filename="/home/rmtcr/RM/../../../usr/local/lib/cmake/Ceres/FindGlog.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Ceres\"/>
 		</Unit>
 	</Project>
 </CodeBlocks_project_file>
