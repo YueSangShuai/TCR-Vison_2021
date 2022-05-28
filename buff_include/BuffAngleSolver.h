@@ -27,7 +27,7 @@ private:
     Point3f GetShootPoistion(float angle,Point3f center,float r);
     void ChassisToPtz(RM_BuffData & BestArmor);
     Angle_t ComputeBuffShootTime(float tx, float ty, float distance,struct CarData CarDatas);
-
+    void BuffKf(double x,double y,double t,KF_two Filter);//根据二维点做预测
     //底盘usb
     cv::Mat caremaMatrix = (cv::Mat_<double>(3, 3) <<
             1281.2415311337063031,-0.3089685211182275,654.0926382032376978,

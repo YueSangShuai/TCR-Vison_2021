@@ -906,14 +906,14 @@ CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o: ../header/General.h
 CMakeFiles/RM.dir/buff_src/predict.cpp.o: ../buff_include/predict.h
 CMakeFiles/RM.dir/buff_src/predict.cpp.o: ../buff_src/predict.cpp
 
-CMakeFiles/RM.dir/global/General.cpp.o: ../global/General.cpp
-CMakeFiles/RM.dir/global/General.cpp.o: ../header/General.h
-CMakeFiles/RM.dir/global/General.cpp.o: ../header/RemoteController.h
-CMakeFiles/RM.dir/global/General.cpp.o: ../header/serialport.h
-
 CMakeFiles/RM.dir/global/serialport.cpp.o: ../global/serialport.cpp
 CMakeFiles/RM.dir/global/serialport.cpp.o: ../header/General.h
 CMakeFiles/RM.dir/global/serialport.cpp.o: ../header/serialport.h
+
+CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.o: ../header/General.h
+CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.o: ../header/RemoteController.h
+CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.o: ../header/serialport.h
+CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.o: /home/rmtcr/CLionProjects/bit_buff/General.cpp
 
 CMakeFiles/RM.dir/main.cpp.o: ../DaHengCamera/DaHengCamera.h
 CMakeFiles/RM.dir/main.cpp.o: ../header/DxImageProc.h

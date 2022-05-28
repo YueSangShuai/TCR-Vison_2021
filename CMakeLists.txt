@@ -33,7 +33,7 @@ set(SOURCE_FILES main.cpp
         AngleSolver/Filter.cpp
         AngleSolver/AngleSolver_2.cpp
         global/serialport.cpp
-        global/General.cpp
+        ../CLionProjects/bit_buff/General.cpp
         Thread/ImageProcess.cpp
         Thread/RemoteController.cpp
         DaHengCamera/DaHengCamera.h
@@ -42,11 +42,14 @@ set(SOURCE_FILES main.cpp
         buff_include/BuffAngleSolver.h
         buff_src/FindBuff.cpp
         buff_src/BuffAngleSolver.cpp
-        DrawCurve/DraCurve.h DrawCurve/DraCurve.cpp buff_src/predict.cpp buff_include/predict.h)
+        DrawCurve/DraCurve.h
+        DrawCurve/DraCurve.cpp
+        buff_src/predict.cpp
+        buff_include/predict.h)
 #µº»Îcereø‚
 find_package(Ceres REQUIRED)
 include_directories( ${CERES_INCLUDE_DIRS})
-add_executable(RM ${SOURCE_FILES} header/General.h header/Armor.h header/Filter.h header/AngleSolver_2.h header/ImageProcess.h header/RemoteController.h header/serialport.h Armor_recognition/LightBar.cpp Armor_recognition/findLights.cpp Armor_recognition/ArmorBox.cpp Armor_recognition/ArmorDetector.cpp Armor_recognition/ArmorNumClassifier.cpp Armor_recognition/matchArmors.cpp AngleSolver/Filter.cpp AngleSolver/AngleSolver_2.cpp global/serialport.cpp global/General.cpp Thread/ImageProcess.cpp Thread/RemoteController.cpp DaHengCamera/DaHengCamera.h DaHengCamera/DaHengCamera.cpp)
+add_executable(RM ${SOURCE_FILES} header/General.h header/Armor.h header/Filter.h header/AngleSolver_2.h header/ImageProcess.h header/RemoteController.h header/serialport.h Armor_recognition/LightBar.cpp Armor_recognition/findLights.cpp Armor_recognition/ArmorBox.cpp Armor_recognition/ArmorDetector.cpp Armor_recognition/ArmorNumClassifier.cpp Armor_recognition/matchArmors.cpp AngleSolver/Filter.cpp AngleSolver/AngleSolver_2.cpp global/serialport.cpp ../CLionProjects/bit_buff/General.cpp Thread/ImageProcess.cpp Thread/RemoteController.cpp DaHengCamera/DaHengCamera.h DaHengCamera/DaHengCamera.cpp)
 # ¡¥Ω”Opencvø‚
 target_link_libraries(RM ${OpenCV_LIBS} gxiapi ${CERES_LIBRARIES})
 

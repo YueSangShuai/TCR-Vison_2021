@@ -24,6 +24,7 @@ uint8_t binaryThreshold=100;
 uint8_t rRadius=20;
 int image_count=0;
 double count_del_angle=0;
+double count_del_time=0;
 /**
  * @brief FindBuff::BuffModeSwitch
  * @param Src
@@ -76,18 +77,22 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
 ////        cout<<"逆时针"<<endl;
 ////    }
 //    cout<<"rotation"<<rotation<<endl;
-    double del_angle= GetAngle(Buff.circle_center,BuffBox[3].box.center,BuffBox[2].box.center);
+    double del_angle= GetAngle(Buff.circle_center,BuffBox[3].box.center,BuffBox[2].box.center)/(180/PI);
+    double del_time=(Buff.timestamp-BuffBox[3].timestamp)/(cvGetTickFrequency()*1000000);
+    cout<<"del_angle"<<endl;
     ofstream out_txt_file;
     out_txt_file.open("/home/rmtcr/RM/angle.txt", ios::out | ios::app);
 //    out_txt_file << del_angle<<endl;
 
-    if(Buff.image_count<49){
-        count_del_angle+=del_angle;
-    }else if(Buff.image_count==49){
-        out_txt_file << count_del_angle<<endl;
-        cout<<"count_del_angle="<<count_del_angle*57.3<<endl;
-        count_del_angle=0;
-    }
+//    if(Buff.image_count<49){
+//        count_del_angle+=del_angle;
+//        count_del_time+=del_time;
+//    }else if(Buff.image_count==49){
+//        out_txt_file << count_del_angle/count_del_time<<endl;
+//        cout<<"count_del_angle="<<count_del_angle/count_del_time<<endl;
+//        count_del_angle=0;
+//        count_del_time=0;
+//    }
 
     //draw.InsertData(BuffBox[3].armoranle-BuffBox[2].armoranle);
 //    if(del_angle>0.5){

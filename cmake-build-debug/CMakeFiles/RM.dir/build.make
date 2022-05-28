@@ -206,18 +206,18 @@ CMakeFiles/RM.dir/global/serialport.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RM.dir/global/serialport.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rmtcr/RM/global/serialport.cpp -o CMakeFiles/RM.dir/global/serialport.cpp.s
 
-CMakeFiles/RM.dir/global/General.cpp.o: CMakeFiles/RM.dir/flags.make
-CMakeFiles/RM.dir/global/General.cpp.o: ../global/General.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rmtcr/RM/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/RM.dir/global/General.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/RM.dir/global/General.cpp.o -c /home/rmtcr/RM/global/General.cpp
+CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.o: CMakeFiles/RM.dir/flags.make
+CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.o: /home/rmtcr/CLionProjects/bit_buff/General.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rmtcr/RM/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.o -c /home/rmtcr/CLionProjects/bit_buff/General.cpp
 
-CMakeFiles/RM.dir/global/General.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RM.dir/global/General.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rmtcr/RM/global/General.cpp > CMakeFiles/RM.dir/global/General.cpp.i
+CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rmtcr/CLionProjects/bit_buff/General.cpp > CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.i
 
-CMakeFiles/RM.dir/global/General.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RM.dir/global/General.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rmtcr/RM/global/General.cpp -o CMakeFiles/RM.dir/global/General.cpp.s
+CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rmtcr/CLionProjects/bit_buff/General.cpp -o CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.s
 
 CMakeFiles/RM.dir/Thread/ImageProcess.cpp.o: CMakeFiles/RM.dir/flags.make
 CMakeFiles/RM.dir/Thread/ImageProcess.cpp.o: ../Thread/ImageProcess.cpp
@@ -322,7 +322,7 @@ RM_OBJECTS = \
 "CMakeFiles/RM.dir/AngleSolver/Filter.cpp.o" \
 "CMakeFiles/RM.dir/AngleSolver/AngleSolver_2.cpp.o" \
 "CMakeFiles/RM.dir/global/serialport.cpp.o" \
-"CMakeFiles/RM.dir/global/General.cpp.o" \
+"CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.o" \
 "CMakeFiles/RM.dir/Thread/ImageProcess.cpp.o" \
 "CMakeFiles/RM.dir/Thread/RemoteController.cpp.o" \
 "CMakeFiles/RM.dir/DaHengCamera/DaHengCamera.cpp.o" \
@@ -344,7 +344,7 @@ RM: CMakeFiles/RM.dir/Armor_recognition/matchArmors.cpp.o
 RM: CMakeFiles/RM.dir/AngleSolver/Filter.cpp.o
 RM: CMakeFiles/RM.dir/AngleSolver/AngleSolver_2.cpp.o
 RM: CMakeFiles/RM.dir/global/serialport.cpp.o
-RM: CMakeFiles/RM.dir/global/General.cpp.o
+RM: CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.o
 RM: CMakeFiles/RM.dir/Thread/ImageProcess.cpp.o
 RM: CMakeFiles/RM.dir/Thread/RemoteController.cpp.o
 RM: CMakeFiles/RM.dir/DaHengCamera/DaHengCamera.cpp.o

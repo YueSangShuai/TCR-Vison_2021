@@ -19,8 +19,8 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/rmtcr/RM/buff_src/BuffAngleSolver.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/buff_src/BuffAngleSolver.cpp.o"
   "/home/rmtcr/RM/buff_src/FindBuff.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o"
   "/home/rmtcr/RM/buff_src/predict.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/buff_src/predict.cpp.o"
-  "/home/rmtcr/RM/global/General.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/global/General.cpp.o"
   "/home/rmtcr/RM/global/serialport.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/global/serialport.cpp.o"
+  "/home/rmtcr/CLionProjects/bit_buff/General.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.o"
   "/home/rmtcr/RM/main.cpp" "/home/rmtcr/RM/cmake-build-debug/CMakeFiles/RM.dir/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

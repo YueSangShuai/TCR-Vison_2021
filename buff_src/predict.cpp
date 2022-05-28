@@ -28,3 +28,6 @@ predict::predict(){
     options.num_threads=3;
 
 }
+double predict::get_predict() {
+
+}

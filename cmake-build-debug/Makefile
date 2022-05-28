@@ -547,33 +547,6 @@ buff_src/predict.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/buff_src/predict.cpp.s
 .PHONY : buff_src/predict.cpp.s
 
-global/General.o: global/General.cpp.o
-
-.PHONY : global/General.o
-
-# target to build an object file
-global/General.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/global/General.cpp.o
-.PHONY : global/General.cpp.o
-
-global/General.i: global/General.cpp.i
-
-.PHONY : global/General.i
-
-# target to preprocess a source file
-global/General.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/global/General.cpp.i
-.PHONY : global/General.cpp.i
-
-global/General.s: global/General.cpp.s
-
-.PHONY : global/General.s
-
-# target to generate assembly for a file
-global/General.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/global/General.cpp.s
-.PHONY : global/General.cpp.s
-
 global/serialport.o: global/serialport.cpp.o
 
 .PHONY : global/serialport.o
@@ -600,6 +573,33 @@ global/serialport.s: global/serialport.cpp.s
 global/serialport.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/global/serialport.cpp.s
 .PHONY : global/serialport.cpp.s
+
+home/rmtcr/CLionProjects/bit_buff/General.o: home/rmtcr/CLionProjects/bit_buff/General.cpp.o
+
+.PHONY : home/rmtcr/CLionProjects/bit_buff/General.o
+
+# target to build an object file
+home/rmtcr/CLionProjects/bit_buff/General.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.o
+.PHONY : home/rmtcr/CLionProjects/bit_buff/General.cpp.o
+
+home/rmtcr/CLionProjects/bit_buff/General.i: home/rmtcr/CLionProjects/bit_buff/General.cpp.i
+
+.PHONY : home/rmtcr/CLionProjects/bit_buff/General.i
+
+# target to preprocess a source file
+home/rmtcr/CLionProjects/bit_buff/General.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.i
+.PHONY : home/rmtcr/CLionProjects/bit_buff/General.cpp.i
+
+home/rmtcr/CLionProjects/bit_buff/General.s: home/rmtcr/CLionProjects/bit_buff/General.cpp.s
+
+.PHONY : home/rmtcr/CLionProjects/bit_buff/General.s
+
+# target to generate assembly for a file
+home/rmtcr/CLionProjects/bit_buff/General.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RM.dir/build.make CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.s
+.PHONY : home/rmtcr/CLionProjects/bit_buff/General.cpp.s
 
 main.o: main.cpp.o
 
@@ -682,12 +682,12 @@ help:
 	@echo "... buff_src/predict.o"
 	@echo "... buff_src/predict.i"
 	@echo "... buff_src/predict.s"
-	@echo "... global/General.o"
-	@echo "... global/General.i"
-	@echo "... global/General.s"
 	@echo "... global/serialport.o"
 	@echo "... global/serialport.i"
 	@echo "... global/serialport.s"
+	@echo "... home/rmtcr/CLionProjects/bit_buff/General.o"
+	@echo "... home/rmtcr/CLionProjects/bit_buff/General.i"
+	@echo "... home/rmtcr/CLionProjects/bit_buff/General.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

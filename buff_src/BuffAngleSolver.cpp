@@ -103,7 +103,7 @@ void BuffAngleSolver::GetBuffShootAngle(RM_BuffData* BestArmor,BuffStatus BuffSh
     GetBuffrAngle(BestArmor[3]);
 
     Point3d BuffCenter=getWorldPoints(BestArmor[3].circle_center,load_rve,load_tve,caremaMatrix);
-//    cout<<"BuffCenter="<<BuffCenter<<endl;
+    cout<<"BuffCenter="<<BuffCenter<<endl;
     CircleCenters[CircleCenterNumber%MAX_SAVE_CIRCLR_CENTER_NUMBER] = BuffCenter;
     CircleCenterNumber++;
     if(CircleCenterNumber<MIN_SAVE_CIRCLR_CENTER_NUMBER){
@@ -234,6 +234,22 @@ void BuffAngleSolver::BuffAngleSpeedFilter(float & AngleSpeed, KF_two Filter,Car
 
 }
 
+void BuffAngleSolver::BuffKf(double x,double y,double t,KF_two Filter) {
+    if(!Filter.is_set_x){
+        Eigen::VectorXd X(4,1);
+        X<<x,y,x/t,y/t;
+        Filter.set_x(X);
+    }else{
+        Eigen::MatrixXd F(4,4);
+        F<<1,0,t,0,
+           0,1,0,t,
+           0,0,1,0,
+           0,0,0,1;
+        Eigen::MatrixXd X(4,1);
+        X<<x,y,x/t,y/t;
+    }
+
+}
 /**
  * @brief BuffAngleSolver::GetBuffCentralAngle  得到当前位置对应旋转圆心角
  * @param ObjectPoistion

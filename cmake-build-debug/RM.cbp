@@ -92,6 +92,9 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/rmtcr/CLionProjects/bit_buff/General.cpp">
+			<Option target="RM"/>
+		</Unit>
 		<Unit filename="/home/rmtcr/RM/AngleSolver/AngleSolver_2.cpp">
 			<Option target="RM"/>
 		</Unit>
@@ -150,9 +153,6 @@
 			<Option target="RM"/>
 		</Unit>
 		<Unit filename="/home/rmtcr/RM/buff_src/predict.cpp">
-			<Option target="RM"/>
-		</Unit>
-		<Unit filename="/home/rmtcr/RM/global/General.cpp">
 			<Option target="RM"/>
 		</Unit>
 		<Unit filename="/home/rmtcr/RM/global/serialport.cpp">
