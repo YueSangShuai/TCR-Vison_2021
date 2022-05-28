@@ -106,6 +106,7 @@ struct ImageDate {
     cv::Mat SrcImage;
     ImageGetMode mode;      // 读取图像模式
     CarData ReciveStm32;    // 下位机通过串口传输而来
+    int imageIndex;
 };
 //待击打大符信息
 struct RM_BuffData{
@@ -119,7 +120,8 @@ struct RM_BuffData{
     Point2f circle_center;
     double armoranle;
     Point2f normalizedCenter;
-    double timestamp=(double)cvGetTickCount();
+    double timestamp;
+    int image_count=0;
 };
 typedef enum{
     BUFF_FIRST_SHOOT,

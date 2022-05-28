@@ -22,6 +22,8 @@ uint8_t blue_dilateKernelSize=5;
 uint8_t red_dilateKernelSize=5;
 uint8_t binaryThreshold=100;
 uint8_t rRadius=20;
+int image_count=0;
+double count_del_angle=0;
 /**
  * @brief FindBuff::BuffModeSwitch
  * @param Src
@@ -61,6 +63,10 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     Buff.normalizedCenter=Point2f((Buff.box.center.x-Buff.circle_center.x),(Buff.box.center.y-Buff.circle_center.y));
     Buff.armoranle= myArctan(Buff.normalizedCenter);
     Buff.box = BuffObject;
+    Buff.image_count=image_count;
+    Buff.timestamp=(double)cvGetTickCount();
+    image_count++;
+    if(image_count==50)image_count=0;
 //    double rotation= BuffBox[3].armoranle-BuffBox[2].armoranle;
 ////    if(rotation<0){
 ////        this->is_rotation=true;
@@ -71,10 +77,25 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
 ////    }
 //    cout<<"rotation"<<rotation<<endl;
     double del_angle= GetAngle(Buff.circle_center,BuffBox[3].box.center,BuffBox[2].box.center);
-    draw.InsertData(BuffBox[3].armoranle-BuffBox[2].armoranle);
-    cout<<"del_angle"<<del_angle;
-    double anglespeed=del_angle/(BuffBox[3].timestamp-BuffBox[2].timestamp);
-    cout<<"angle_speed="<<anglespeed<<endl;
+    ofstream out_txt_file;
+    out_txt_file.open("/home/rmtcr/RM/angle.txt", ios::out | ios::app);
+//    out_txt_file << del_angle<<endl;
+
+    if(Buff.image_count<49){
+        count_del_angle+=del_angle;
+    }else if(Buff.image_count==49){
+        out_txt_file << count_del_angle<<endl;
+        cout<<"count_del_angle="<<count_del_angle*57.3<<endl;
+        count_del_angle=0;
+    }
+
+    //draw.InsertData(BuffBox[3].armoranle-BuffBox[2].armoranle);
+//    if(del_angle>0.5){
+//        cout<<"del_angle"<<del_angle;
+//        double anglespeed=del_angle/(BuffBox[3].timestamp-BuffBox[2].timestamp);
+//        cout<<"angle_speed="<<anglespeed<<endl;
+//        draw.InsertData(anglespeed);
+//    }
     //存入数组,进入分析
     if(BuffNum == 0){
         BuffNum++;
@@ -112,7 +133,8 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     if(BuffNum<3)
         return  (RM_BuffData*)-1;
     //circle(Src,circle_center,CV_AA,Scalar(255,0,0),5);
-    cout<<"del_time"<<BuffBox[3].timestamp-BuffBox[2].timestamp<<endl;
+
+    cout<<"del_time"<<(BuffBox[3].timestamp-BuffBox[2].timestamp)/(cvGetTickFrequency()*1000)<<endl;
     return BuffBox;
 }
 
@@ -208,104 +230,120 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
     findContours(dst, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_NONE);
     bool success = false;                               //记录是否成功找到符合要求扇叶
 
-    for (size_t i = 0; i < hierarchy.size(); i++) {
-        if (hierarchy[i][2] == -1)continue;
-        if (contours[i].size() < 6)continue;
-        RotatedRect box = fitEllipse(contours[i]);
-
-        float shanye_bili = box.size.height / box.size.width;
-        float shanye_area = box.size.height * box.size.height;
-
-        if (shanye_bili > 2.9 || (shanye_bili < 1.7 && shanye_bili > 1.5) || shanye_bili < 1.1 ||
-            box.size.area() < 500)
-            continue;
-        ellipse(Src, box, Scalar(255, 0, 255), 5, CV_AA);
-        int *nei_lunkuo = (int *) malloc(contours.size() * sizeof(int));
-        memset(nei_lunkuo, 0, contours.size() * sizeof(int));
-        //判断第一个内轮廓是否符合标准
-        if (contours[hierarchy[i][2]].size() >= 6) {
-            RotatedRect first_box = fitEllipse(contours[hierarchy[i][2]]);
-
-//            cout<<"首个扇叶bili:"<<(float)first_box.size.height/(float)first_box.size.width<<endl;
-//            cout<<"首个面积比1:"<<box.size.area()/first_box.size.area()<<endl;
-//            cout<<"首个轮廓面积："<<(Src.cols*Src.rows)/box.size.area()<<endl;
-            if (box.size.area() / first_box.size.area() < 10)
-                *(nei_lunkuo + hierarchy[i][2]) = 1;
-        }
-        int j = hierarchy[i][2];
-        while (hierarchy[j][0] != -1) {
-            if (contours[hierarchy[j][0]].size() < 6) {
-                j = hierarchy[j][0];
-                continue;
-            }
-            RotatedRect box2 = fitEllipse(contours[hierarchy[j][0]]);
-            if (box.size.area() / box2.size.area() > 10) {
-                j = hierarchy[j][0];
-                continue;
-            }
-            *(nei_lunkuo + hierarchy[j][0]) = 1;
-            j = hierarchy[j][0];
-        }
-        int z = hierarchy[i][2];
-        while (hierarchy[z][1] != -1) {
-            if (contours[hierarchy[z][1]].size() < 6) {
-                z = hierarchy[z][1];
-                continue;
-            }
-            RotatedRect box2 = fitEllipse(contours[hierarchy[j][0]]);
-            if (box.size.area() / box2.size.area() > 10) {
-                z = hierarchy[z][1];
-                continue;
-            }
-            if (box.size.area() / box2.size.area() > 7)continue;
-            *(nei_lunkuo + hierarchy[z][1]) = 1;
-            z = hierarchy[z][1];
-        }
-        int num = 0;
-        for (int t = 0; t < contours.size(); t++) {
-            if (*(nei_lunkuo + t) == 1) {
-                num++;
-            }
-        }
- //       cout << "内轮廓数量:" << num << endl;
-        if (num == 1) {
-            success = true;
-            if (contours[hierarchy[i][2]].size() < 6)continue;
-            RotatedRect box_buff = fitEllipse(contours[hierarchy[i][2]]);
-            if (box_buff.angle < 5 || box_buff.angle > 175) {
-                if (box.angle > 5 && box.angle < 175)continue;
-            } else {
-                if (!((tan(box_buff.angle * PI / 180) * tan(box.angle * PI / 180) + 1) < 0.3 ||
-                      (box_buff.angle - box.angle) < 5))
-                    continue;
-            }
-//            cout<<"轮廓面积最终比："<<(Src.cols*Src.rows)/box_buff.size.area()<<endl;
-            box_buffs.push_back(box_buff);
-            ellipse(Src, box_buff, Scalar(255, 0, 0), 5, CV_AA);
-        }
-        free(nei_lunkuo);
-//        if(num == 2){
-//            if(contours[hierarchy[i][2]].size()<6)continue;
-//            RotatedRect box = fitEllipse(contours[hierarchy[i][2]]);
-
-//            ellipse(dst, box, Scalar(0,255,0), 5, CV_AA);
-//            if(hierarchy[hierarchy[i][2]][0] != -1){
-//                if(contours[hierarchy[hierarchy[i][2]][0]].size()<6)continue;
-//                RotatedRect box = fitEllipse(contours[hierarchy[hierarchy[i][2]][0]]);
-
-//                ellipse(dst, box, Scalar(0,0,255), 5, CV_AA);
+//    for (size_t i = 0; i < hierarchy.size(); i++) {
+//        if (hierarchy[i][2] == -1)continue;
+//        if (contours[i].size() < 6)continue;
+//        RotatedRect box = fitEllipse(contours[i]);
+//
+//        float shanye_bili = box.size.height / box.size.width;
+//        float shanye_area = box.size.height * box.size.height;
+//
+////        if (shanye_bili > 2.9 || (shanye_bili < 1.7 && shanye_bili > 1.5) || shanye_bili < 1.1 ||
+////            box.size.area() < 500)
+////            continue;
+//        ellipse(Src, box, Scalar(255, 0, 255), 5, CV_AA);
+//        int *nei_lunkuo = (int *) malloc(contours.size() * sizeof(int));
+//        memset(nei_lunkuo, 0, contours.size() * sizeof(int));
+//        //判断第一个内轮廓是否符合标准
+//        if (contours[hierarchy[i][2]].size() >= 6) {
+//            RotatedRect first_box = fitEllipse(contours[hierarchy[i][2]]);
+//
+////            cout<<"首个扇叶bili:"<<(float)first_box.size.height/(float)first_box.size.width<<endl;
+////            cout<<"首个面积比1:"<<box.size.area()/first_box.size.area()<<endl;
+////            cout<<"首个轮廓面积："<<(Src.cols*Src.rows)/box.size.area()<<endl;
+//            if (box.size.area() / first_box.size.area() < 10)
+//                *(nei_lunkuo + hierarchy[i][2]) = 1;
+//        }
+//        int j = hierarchy[i][2];
+//        while (hierarchy[j][0] != -1) {
+//            if (contours[hierarchy[j][0]].size() < 6) {
+//                j = hierarchy[j][0];
+//                continue;
+//            }
+//            RotatedRect box2 = fitEllipse(contours[hierarchy[j][0]]);
+//            if (box.size.area() / box2.size.area() > 10) {
+//                j = hierarchy[j][0];
+//                continue;
+//            }
+//            *(nei_lunkuo + hierarchy[j][0]) = 1;
+//            j = hierarchy[j][0];
+//        }
+//        int z = hierarchy[i][2];
+//        while (hierarchy[z][1] != -1) {
+//            if (contours[hierarchy[z][1]].size() < 6) {
+//                z = hierarchy[z][1];
+//                continue;
+//            }
+//            RotatedRect box2 = fitEllipse(contours[hierarchy[j][0]]);
+//            if (box.size.area() / box2.size.area() > 10) {
+//                z = hierarchy[z][1];
+//                continue;
+//            }
+//            if (box.size.area() / box2.size.area() > 7)continue;
+//            *(nei_lunkuo + hierarchy[z][1]) = 1;
+//            z = hierarchy[z][1];
+//        }
+//        int num = 0;
+//        for (int t = 0; t < contours.size(); t++) {
+//            if (*(nei_lunkuo + t) == 1) {
+//                num++;
 //            }
 //        }
-
-    }
+// //       cout << "内轮廓数量:" << num << endl;
+//        if (num == 1) {
+//            success = true;
+//            if (contours[hierarchy[i][2]].size() < 6)continue;
+//            RotatedRect box_buff = fitEllipse(contours[hierarchy[i][2]]);
+//            if (box_buff.angle < 5 || box_buff.angle > 175) {
+//                if (box.angle > 5 && box.angle < 175)continue;
+//            } else {
+//                if (!((tan(box_buff.angle * PI / 180) * tan(box.angle * PI / 180) + 1) < 0.3 ||
+//                      (box_buff.angle - box.angle) < 5))
+//                    continue;
+//            }
+////            cout<<"轮廓面积最终比："<<(Src.cols*Src.rows)/box_buff.size.area()<<endl;
+//            box_buffs.push_back(box_buff);
+//            ellipse(Src, box_buff, Scalar(255, 0, 0), 5, CV_AA);
+//        }
+//        free(nei_lunkuo);
+////        if(num == 2){
+////            if(contours[hierarchy[i][2]].size()<6)continue;
+////            RotatedRect box = fitEllipse(contours[hierarchy[i][2]]);
+//
+////            ellipse(dst, box, Scalar(0,255,0), 5, CV_AA);
+////            if(hierarchy[hierarchy[i][2]][0] != -1){
+////                if(contours[hierarchy[hierarchy[i][2]][0]].size()<6)continue;
+////                RotatedRect box = fitEllipse(contours[hierarchy[hierarchy[i][2]][0]]);
+//
+////                ellipse(dst, box, Scalar(0,0,255), 5, CV_AA);
+////            }
+////        }
+//
+//    }
     if (contours.size() > 2) {
         vector<Point> possibleCenter;
         for (uint i = 0; i < contours.size(); i++) {
             int sub = hierarchy[i][2];
             if (sub != -1)//有子轮廓
             {
-
-            }else{
+                if(hierarchy[sub][0]==-1)//没有兄弟轮廓
+                {
+                    auto area = contourArea(contours[sub]);//轮廓面积
+                    auto rect = minAreaRect(contours[sub]);//轮廓外接矩形
+                    auto mmp = rect.size;
+                    float aspectRatio = mmp.height / mmp.width;
+                    float areaRatio = area / (rect.size.width * rect.size.height);//面积比，用来衡量轮廓与矩形的相似度
+                    if (aspectRatio > 1)
+                        aspectRatio = 1 / aspectRatio;
+                    //qDebug()<<"面积:"<<area<<",长宽比:"<<aspectRatio<<",面积比:"<<areaRatio<<endl;
+                    //TODO:确定实际装甲板面积、长宽比、面积占比
+                    if (area > 100&& aspectRatio < 0.76 && areaRatio > 0.6 ) {
+                        ellipse(dst, rect, Scalar(0,255,0), 5, CV_AA);
+                        box_buffs.push_back(rect);
+                    }
+                }
+            }
+                else{
                 Point2f center;
                 float radius;
                 minEnclosingCircle(contours[i], center, radius);
@@ -392,7 +430,7 @@ RotatedRect FindBuff::GetShootBuff(vector<RotatedRect> box_buffs,Mat Src){
     memset(grade, 0, box_buffs.size()*sizeof(int));
     for(int i = 0;i<box_buffs.size();i++){
         *(grade+i) = 100*(1 - fabs(box_buffs[i].size.height/box_buffs[i].size.width - BUFF_W_RATIO_H)/BUFF_W_RATIO_H);
-        cout<<fabs((Src.cols*Src.rows)/box_buffs[i].size.area())<<endl;
+        //cout<<fabs((Src.cols*Src.rows)/box_buffs[i].size.area())<<endl;
         *(grade+i) += 100*(1 - fabs((Src.cols*Src.rows)/box_buffs[i].size.area() - BUFF_AREA_RATIO)/BUFF_AREA_RATIO);
     }
     int max_grade = *grade;
