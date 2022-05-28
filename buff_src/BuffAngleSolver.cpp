@@ -110,33 +110,34 @@ void BuffAngleSolver::GetBuffShootAngle(RM_BuffData* BestArmor,BuffStatus BuffSh
         //当前记录圆心数量不足
         return;
     }
-//    //得到法向量,和旋转角度
-//    float r_Pitch,r_Yaw;
-//    if(FrameBlankNumber==0){
-//        old_Vector = Point3f(CircleCenters[4].x - BuffCenter.x,CircleCenters[4].y - BuffCenter.y,CircleCenters[4].z - BuffCenter.z);
-//        Vectors[SaveVectorNumber%MAX_SAVE_CIRCLR_CENTER_NUMBER] = Point3f(CircleCenters[4].x - BuffCenter.x,CircleCenters[4].y - BuffCenter.y,CircleCenters[4].z - BuffCenter.z);
-//        SaveVectorNumber++;
-//    }
-//    if(FrameBlankNumber==RUN_FRAME_BLANK_NUMBER){
-//        Point3f new_Vector = Point3f(CircleCenters[4].x - BuffCenter.x,CircleCenters[4].y - BuffCenter.y,CircleCenters[4].z - BuffCenter.z);
-//        FrameBlankNumber = 0;
-//        int i = 0;
-//        float sum_Pitch = 0;
-//        float sum_Yaw = 0;
-//        for(;i<SaveVectorNumber&&i<MAX_SAVE_CIRCLR_CENTER_NUMBER;i++){
-//            Point3f NormalVector;
-//            NormalVector.x = new_Vector.y*Vectors[i].z - Vectors[i].y*new_Vector.z;
-//            NormalVector.y = new_Vector.z*Vectors[i].x - Vectors[i].y*new_Vector.x;
-//            NormalVector.z = new_Vector.x*Vectors[i].y - Vectors[i].x*new_Vector.y;
-//            //计算角度
-//            float pitch = atan2(NormalVector.y,NormalVector.z);
-//            float yaw = atan2(NormalVector.x,NormalVector.z);
-//            sum_Pitch += pitch;
-//            sum_Yaw += yaw;
-//        }
-//        r_Pitch = sum_Pitch/i;
-//        r_Yaw = sum_Yaw/i;
-//    }
+    //得到法向量,和旋转角度
+    float r_Pitch,r_Yaw;
+    if(FrameBlankNumber==0){
+        old_Vector = Point3f(CircleCenters[4].x - BuffCenter.x,CircleCenters[4].y - BuffCenter.y,CircleCenters[4].z - BuffCenter.z);
+        Vectors[SaveVectorNumber%MAX_SAVE_CIRCLR_CENTER_NUMBER] = Point3f(CircleCenters[4].x - BuffCenter.x,CircleCenters[4].y - BuffCenter.y,CircleCenters[4].z - BuffCenter.z);
+        SaveVectorNumber++;
+    }
+    if(FrameBlankNumber==RUN_FRAME_BLANK_NUMBER) {
+        Point3f new_Vector = Point3f(CircleCenters[4].x - BuffCenter.x, CircleCenters[4].y - BuffCenter.y,
+                                     CircleCenters[4].z - BuffCenter.z);
+        FrameBlankNumber = 0;
+        int i = 0;
+        float sum_Pitch = 0;
+        float sum_Yaw = 0;
+        for (; i < SaveVectorNumber && i < MAX_SAVE_CIRCLR_CENTER_NUMBER; i++) {
+            Point3f NormalVector;
+            NormalVector.x = new_Vector.y * Vectors[i].z - Vectors[i].y * new_Vector.z;
+            NormalVector.y = new_Vector.z * Vectors[i].x - Vectors[i].y * new_Vector.x;
+            NormalVector.z = new_Vector.x * Vectors[i].y - Vectors[i].x * new_Vector.y;
+            //计算角度
+            float pitch = atan2(NormalVector.y, NormalVector.z);
+            float yaw = atan2(NormalVector.x, NormalVector.z);
+            sum_Pitch += pitch;
+            sum_Yaw += yaw;
+        }
+        r_Pitch = sum_Pitch / i;
+        r_Yaw = sum_Yaw / i;
+    }
 //    //坐标旋转至与相机平行
 //    ShootAdjust(BestArmor[0].tx,BestArmor[0].ty,BestArmor[0].tz,r_Pitch,r_Yaw);
 //    ShootAdjust(BestArmor[1].tx,BestArmor[1].ty,BestArmor[1].tz,r_Pitch,r_Yaw);

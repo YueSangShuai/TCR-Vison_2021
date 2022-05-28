@@ -3,6 +3,7 @@
 //
 
 #include "../buff_include/predict.h"
+static int count=50;
 //非线性拟合代价函数
 struct CURVE_FITTING_COST
 {
@@ -28,6 +29,18 @@ predict::predict(){
     options.num_threads=3;
 
 }
-double predict::get_predict() {
+double predict::get_predict(double del_time,double del_angle,int tao,int sample) {
+    double _phi[1]={0.0};
+    problem->AddResidualBlock (     // 向问题中添加误差项
+            // 使用自动求导，模板参数：误差类型，输出维度，输入维度，维数要与前面struct中一致
+            new ceres::AutoDiffCostFunction<CURVE_FITTING_COST, 1, 1> (
+                    //以开始拟合的一帧作为时间轴原点，其余帧与其计算相对时间
+                    new CURVE_FITTING_COST (del_time,(double)del_angle,tao)
+            ),
+            nullptr,            // 核函数，这里不使用，为空
+            _phi                 // 待估计参数
+    );
+    if(sample>count){
 
+    }
 }

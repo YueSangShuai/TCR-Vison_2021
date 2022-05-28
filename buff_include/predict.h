@@ -13,7 +13,8 @@ public:
     int samples;                //样本数量
     double phi;                 //拟合得到的相位
     predict();
-    double get_predict();
+
+    double get_predict(double del_time,double del_angle,int tao,int sample);
 private:
     ceres::Problem *problem;        //Ceres库待求解问题
     ceres::Solver::Options options;
