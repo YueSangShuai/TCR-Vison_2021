@@ -906,6 +906,7 @@ CMakeFiles/RM.dir/buff_src/FindBuff.cpp.o
 CMakeFiles/RM.dir/buff_src/predict.cpp.o
  /home/rmtcr/RM/buff_include/predict.h
  /home/rmtcr/RM/buff_src/predict.cpp
+ /home/rmtcr/RM/header/General.h
 CMakeFiles/RM.dir/global/serialport.cpp.o
  /home/rmtcr/RM/global/serialport.cpp
  /home/rmtcr/RM/header/General.h
