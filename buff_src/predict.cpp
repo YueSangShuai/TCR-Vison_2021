@@ -3,7 +3,7 @@
 //
 
 #include "../buff_include/predict.h"
-static int count=50;
+static int is_count=50;
 //非线性拟合代价函数
 struct CURVE_FITTING_COST
 {
@@ -29,7 +29,7 @@ predict::predict(){
     options.num_threads=3;
 
 }
-double predict::get_predict(double del_time,double del_angle,int tao,int sample) {
+double predict::NiHe(double del_time,double del_angle,int tao,int sample) {
     double _phi[1]={0.0};
     problem->AddResidualBlock (     // 向问题中添加误差项
             // 使用自动求导，模板参数：误差类型，输出维度，输入维度，维数要与前面struct中一致
@@ -40,7 +40,20 @@ double predict::get_predict(double del_time,double del_angle,int tao,int sample)
             nullptr,            // 核函数，这里不使用，为空
             _phi                 // 待估计参数
     );
-    if(sample>count){
-
+    if(sample>is_count){
+        ceres::Solver::Summary summary;                // 优化信息
+        ceres::Solve ( options,problem, &summary );  // 开始优化
+        phi=_phi[0];
+        last_phi=phi;
+    }else{
+        std::cout<<"未能信任这份结果"<<std::endl;
     }
+    delete problem;
+}
+float predict::pos_fun(float t,float phi)
+{
+    return (1.305 * t) - (0.416666666666667 * cos(1.884 *t + phi ));
+}
+Point2f predict::getPredictPoint(double predictime) {
+
 }
