@@ -1,5 +1,6 @@
 ﻿#ifndef FINDBUFF_H
 #define FINDBUFF_H
+#include "../header/Filter.h"
 #include"../header/General.h"
 class FindBuff{
 private:
@@ -9,15 +10,8 @@ private:
     double getCenterAngle(Point2f circle_center,Point2f center);
     Point2f circle_center;
     bool is_rotation=true;
-
 public:
     RM_BuffData* BuffModeSwitch(Mat Src,int color);
-    Point2f getCircleCenter(){
-        return circle_center;
-    }
-    bool getrotation(){
-        return is_rotation;
-    }
 };
 
 #endif // FINDBUFF_H

@@ -90,8 +90,6 @@ int main()
 //    t3.join();
     t2.join();
     t1.join();
-
-
 }
 
 void getData() {

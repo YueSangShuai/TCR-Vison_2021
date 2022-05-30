@@ -31,6 +31,8 @@ extern mutex reciveRes;     //线程读取资源锁
 extern string paramFileName;    // 参数读取路径
 extern string paramCameraName;	// 相机内参外参读取路径
 
+
+
 // 图像更新线程
 // void* imageUpdatingThread(void* PARAM);
 
@@ -118,10 +120,12 @@ struct RM_BuffData{
     RotatedRect box;
     Point2f point[4];
     Point2f circle_center;
-    double armoranle;
+    float armoranle;
     Point2f normalizedCenter;
-    double timestamp;
+    float timestamp;
     int image_count=0;
+    double del_angle=0;
+    double del_time=0;
 };
 typedef enum{
     BUFF_FIRST_SHOOT,

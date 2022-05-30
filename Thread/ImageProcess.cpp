@@ -30,6 +30,8 @@ double fps;
 bool USE_BUFFER = false;
 ImageGetMode last_model = DAHENG;
 
+FindBuff BuffDetector;
+
 // 导入装甲板识别类
 ArmorDetector detector;
 // 导入角度解算类
@@ -245,7 +247,7 @@ void ImageProcess::ImageConsumer() {
         }
         else if (Image[(ImageIndex) % BUFFER].mode == BUFF){          // 能量机关(BUFF模式)
             float buff_pitch,buff_yaw;
-            FindBuff BuffDetector;
+
             RM_BuffData *Buffs = BuffDetector.BuffModeSwitch(Image[(ImageIndex) % BUFFER].SrcImage,Image[(ImageIndex) % BUFFER].ReciveStm32.c);
             if (Buffs != (RM_BuffData *) -1) {
                 BuffAngleSolver BuffAngleData;
