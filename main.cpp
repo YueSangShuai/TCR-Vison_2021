@@ -8,6 +8,7 @@
 #include <thread>		// 线程
 #include "header/General.h"
 #include "header/ImageProcess.h"
+#include"../buff_include/FindBuff.h"
 /**
  * When I wrote this, only God and I understood what I was doing
  * Now, God only knows
@@ -79,16 +80,22 @@ int main()
     // cvCreateTrackbar("BHighV", "B-HSV", &RHighV, 255);
 #endif
 
-    // 线程创建
-    ImageProcess process;
-    std::thread t1(&ImageProcess::ImageProducter, process);		// 创建图像生产线程
-    std::thread t2(&ImageProcess::ImageConsumer, process);		// 创建图像消费线程
-//    std::thread t4(&RemoteController::paraGetCar, Recive);		// 创建收数线程
-//    std::thread t3(&RemoteController::paraReceiver, Send);		// 创建发数线程
-//    t4.join();
-//    t3.join();
-    t2.join();
-    t1.join();
+//    // 线程创建
+//    ImageProcess process;
+//    std::thread t1(&ImageProcess::ImageProducter, process);		// 创建图像生产线程
+//    std::thread t2(&ImageProcess::ImageConsumer, process);		// 创建图像消费线程
+////    std::thread t4(&RemoteController::paraGetCar, Recive);		// 创建收数线程
+////    std::thread t3(&RemoteController::paraReceiver, Send);		// 创建发数线程
+////    t4.join();
+////    t3.join();
+//    t2.join();
+//    t1.join();
+FindBuff buff;
+Mat frame;
+VideoCapture cap("../Video/13.mp4");
+while(true){
+
+}
 
 }
 
