@@ -24,14 +24,6 @@
 ../header/General.h
 /home/rmtcr/RM/header/General.h
 
-/home/rmtcr/RM/buff_include/predict.h
-iostream
--
-ceres/ceres.h
--
-../header/General.h
-/home/rmtcr/RM/header/General.h
-
 /home/rmtcr/RM/buff_src/BuffAngleSolver.cpp
 ../buff_include/BuffAngleSolver.h
 /home/rmtcr/RM/buff_include/BuffAngleSolver.h
@@ -39,22 +31,6 @@ ceres/ceres.h
 /home/rmtcr/RM/header/RemoteController.h
 ../DrawCurve/DraCurve.h
 /home/rmtcr/RM/DrawCurve/DraCurve.h
-
-/home/rmtcr/RM/buff_src/FindBuff.cpp
-../buff_include/FindBuff.h
-/home/rmtcr/RM/buff_include/FindBuff.h
-../DrawCurve/DraCurve.h
-/home/rmtcr/RM/DrawCurve/DraCurve.h
-../header/General.h
-/home/rmtcr/RM/header/General.h
-fstream
--
-iostream
--
-
-/home/rmtcr/RM/buff_src/predict.cpp
-../buff_include/predict.h
-/home/rmtcr/RM/buff_include/predict.h
 
 /home/rmtcr/RM/header/Filter.h
 iostream

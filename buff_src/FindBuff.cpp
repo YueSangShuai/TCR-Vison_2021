@@ -10,7 +10,7 @@
 #define BUFF_AREA_RATIO 500.0       //最终大符内轮廓面积与图片面积像素比
 #define BUFFER_BUFF_BOX 4             //大符内轮廓存储缓冲数量
 #define BUFF_CIRCLE_BOX    3             //圆形计算所需个数,应比总数量少1,最后一位为当前识别目标
-#define BUFF_MIN_DISTANCE 20             //两次记录最短间距
+#define BUFF_MIN_DISTANCE 0             //两次记录最短间距
 
 #define G 9.80665
 DrawCurve draw;
@@ -80,23 +80,20 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
 //    cout<<"rotation"<<rotation<<endl;
     float del_angle= GetAngle(Buff.circle_center,BuffBox[3].box.center,BuffBox[2].box.center)/(180/PI);
     float del_time=(Buff.timestamp-BuffBox[3].timestamp)/(cvGetTickFrequency()*1000000);
-
-    Buff.del_time=del_angle;
-    Buff.del_angle=del_time;
-//    ofstream angle_file;
-//    ofstream kf_file;
-//    angle_file.open("/home/rmtcr/RM/angle.txt", ios::out | ios::app);
-//    kf_file.open("/home/rmtcr/RM/kf.txt", ios::out | ios::app);
-////    out_txt_file << del_angle<<endl;
-//    if(Buff.image_count<29){
-//        count_del_angle+=del_angle;
-//        count_del_time+=del_time;
-//    }else if(Buff.image_count==29){
-//        Buff.del_time=count_del_time;
-//        Buff.del_angle=count_del_angle;
-//        count_del_angle=0;
-//        count_del_time=0;
-//    }
+    ofstream angle_file;
+    ofstream kf_file;
+    angle_file.open("/home/rmtcr/RM/angle.txt", ios::out | ios::app);
+    kf_file.open("/home/rmtcr/RM/kf.txt", ios::out | ios::app);
+//    out_txt_file << del_angle<<endl;
+    if(Buff.image_count<29){
+        count_del_angle+=del_angle;
+        count_del_time+=del_time;
+    }else if(Buff.image_count==29){
+        Buff.del_time=count_del_time;
+        Buff.del_angle=count_del_angle;
+        count_del_angle=0;
+        count_del_time=0;
+    }
 
     //draw.InsertData(BuffBox[3].armoranle-BuffBox[2].armoranle);
 //    if(del_angle>0.5){

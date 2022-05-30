@@ -48,17 +48,17 @@ BuffAngleSolver::BuffAngleSolver(){
 
         Eigen::MatrixXd P_in = Eigen::MatrixXd(2,2);
         P_in << 1.0, 0.0,
-                        0.0,1.0;
+                0.0,1.0;
         KF_BuffAngleSpeed.P = P_in;
 
-         //过程噪声矩阵附初值
+        //过程噪声矩阵附初值
         Eigen::MatrixXd Q_in(2,2);
         Q_in<<1.0, 0.0,
-                        0.0,1;
-        KF_BuffAngleSpeed.Q = Q_in*0.1;
+                0.0,1e-1;
+        KF_BuffAngleSpeed.Q = Q_in;
 
-          //测量矩阵附初值
-        Eigen::MatrixXd H_in(2,2);
+        //测量矩阵附初值
+        Eigen::MatrixXd H_in(1,2);
         H_in<<1.0, 0.0;
         KF_BuffAngleSpeed.H = H_in;
 
@@ -115,19 +115,19 @@ void BuffAngleSolver::GetBuffShootAngle(RM_BuffData* BestArmor,BuffStatus BuffSh
         //当前记录圆心数量不足
         return;
     }
-//    if(BestArmor[3].image_count==29){
-//       //draw1.InsertData(BestArmor[3].del_angle/BestArmor[3].del_time);
-//        float AngleSpeed=BestArmor[3].del_angle;
-//        float del_time=BestArmor[3].del_time;
-//        double temp=BuffKf(AngleSpeed,KF_BuffAngleSpeed,del_time);
-//        double anglespeed=AngleSpeed/del_time;
-//        draw1.InsertData(anglespeed,temp,"value","predict");
-//    }
-    float AngleSpeed=BestArmor[3].del_angle;
-    float del_time=BestArmor[3].del_time;
-    double temp=BuffKf(AngleSpeed,KF_BuffAngleSpeed,del_time);
-    double anglespeed=AngleSpeed/del_time;
-    draw1.InsertData(anglespeed,temp,"value","predict");
+    if(BestArmor[3].image_count==29){
+       //draw1.InsertData(BestArmor[3].del_angle/BestArmor[3].del_time);
+        float AngleSpeed=BestArmor[3].del_angle;
+        float del_time=BestArmor[3].del_time;
+        double temp=BuffKf(AngleSpeed,KF_BuffAngleSpeed,del_time);
+        double anglespeed=AngleSpeed/del_time;
+        draw1.InsertData(anglespeed,temp,"value","predict");
+    }
+//    float AngleSpeed=BestArmor[3].del_angle;
+//    float del_time=BestArmor[3].del_time;
+//    double temp=BuffKf(AngleSpeed,KF_BuffAngleSpeed,del_time);
+//    double anglespeed=AngleSpeed/del_time;
+//    draw1.InsertData(anglespeed,temp,"value","predict");
 
     //    float AngleSpeed = BuffCentralAngle - old_BuffCentralAngle;
 //    BuffAngleSpeedFilter(AngleSpeed,KF_BuffAngleSpeed,carDatas);
