@@ -54,17 +54,17 @@ BuffAngleSolver::BuffAngleSolver(){
          //过程噪声矩阵附初值
         Eigen::MatrixXd Q_in(2,2);
         Q_in<<1.0, 0.0,
-                        0.0,1e-1;
-        KF_BuffAngleSpeed.Q = Q_in;
+                        0.0,1;
+        KF_BuffAngleSpeed.Q = Q_in*0.1;
 
           //测量矩阵附初值
-        Eigen::MatrixXd H_in(1,2);
+        Eigen::MatrixXd H_in(2,2);
         H_in<<1.0, 0.0;
         KF_BuffAngleSpeed.H = H_in;
 
         //测量噪声矩阵附初值
         Eigen::MatrixXd R_in(1,1);
-        R_in<<10;
+        R_in<<1;
         KF_BuffAngleSpeed.R = R_in;
 
         Eigen::MatrixXd F_in(2,2);
@@ -115,11 +115,19 @@ void BuffAngleSolver::GetBuffShootAngle(RM_BuffData* BestArmor,BuffStatus BuffSh
         //当前记录圆心数量不足
         return;
     }
-    if(BestArmor[3].image_count==29){
-       draw1.InsertData(BestArmor[3].del_angle/BestArmor[3].del_time);
-        float AngleSpeed=BestArmor[3].del_angle;
-
-    }
+//    if(BestArmor[3].image_count==29){
+//       //draw1.InsertData(BestArmor[3].del_angle/BestArmor[3].del_time);
+//        float AngleSpeed=BestArmor[3].del_angle;
+//        float del_time=BestArmor[3].del_time;
+//        double temp=BuffKf(AngleSpeed,KF_BuffAngleSpeed,del_time);
+//        double anglespeed=AngleSpeed/del_time;
+//        draw1.InsertData(anglespeed,temp,"value","predict");
+//    }
+    float AngleSpeed=BestArmor[3].del_angle;
+    float del_time=BestArmor[3].del_time;
+    double temp=BuffKf(AngleSpeed,KF_BuffAngleSpeed,del_time);
+    double anglespeed=AngleSpeed/del_time;
+    draw1.InsertData(anglespeed,temp,"value","predict");
 
     //    float AngleSpeed = BuffCentralAngle - old_BuffCentralAngle;
 //    BuffAngleSpeedFilter(AngleSpeed,KF_BuffAngleSpeed,carDatas);
@@ -248,21 +256,24 @@ void BuffAngleSolver::BuffAngleSpeedFilter(float & AngleSpeed, KF_two Filter,Car
 
 }
 
-void BuffAngleSolver::BuffKf(double x,double y,double t,KF_two Filter) {
+double BuffAngleSolver::BuffKf(double del_angle,KF_two Filter,double del_time) {
     if(!Filter.is_set_x){
-        Eigen::VectorXd X(4,1);
-        X<<x,y,x/t,y/t;
-        Filter.set_x(X);
+        //第一次设置滤波
+        Eigen::VectorXd x(2,1);
+        x<<del_angle,0;
+        Filter.set_x(x);
     }else{
-        Eigen::MatrixXd F(4,4);
-        F<<1,0,t,0,
-           0,1,0,t,
-           0,0,1,0,
-           0,0,0,1;
-        Eigen::MatrixXd X(4,1);
-        X<<x,y,x/t,y/t;
+        //连续滤波
+        float a_AngleSpeed = del_angle/del_time;
+        Eigen::VectorXd x(2,1);
+        x<<del_angle,a_AngleSpeed;
+        Eigen::MatrixXd F(2,2);
+        F<<1 , del_time,
+                0 , 1;
+        Filter.Prediction(F);
+        Filter.update(x,F);
     }
-
+    return Filter.x_(0);
 }
 /**
  * @brief BuffAngleSolver::GetBuffCentralAngle  得到当前位置对应旋转圆心角

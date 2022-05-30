@@ -17,7 +17,7 @@ public:
     predict();
 
     double NiHe(double del_time,double del_angle,int tao,int sample);
-    Point2f getPredictPoint(double predictime);
+    Point2f getPredictPoint(RM_BuffData buffs,double predictime,double passtime,int rotation);
     float pos_fun(float t,float phi);
 private:
     ceres::Problem *problem;        //Ceres库待求解问题

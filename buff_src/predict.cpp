@@ -54,6 +54,25 @@ float predict::pos_fun(float t,float phi)
 {
     return (1.305 * t) - (0.416666666666667 * cos(1.884 *t + phi ));
 }
-Point2f predict::getPredictPoint(double predictime) {
+Point2f predict::getPredictPoint(RM_BuffData buffs,double predictime,double passtime,int rotation) {
+    static float lastX,lastY;
+    Point2f tmp;
+    float predictAngleDifference=0.0;
+    predictAngleDifference = pos_fun(predictime+passtime,phi)-pos_fun(passtime,phi);
+    if(rotation==1){
+        predictAngleDifference=-predictAngleDifference;
+    }
+    float x=buffs.normalizedCenter.x;
+    float y=buffs.normalizedCenter.y;
+    Point2f temp;
+    tmp.x=x*cos(predictAngleDifference)-y*sin(predictAngleDifference);
+    tmp.x=0.1*tmp.x+0.9*lastX;
+    lastX=tmp.x;
+
+    tmp.y=y*cos(predictAngleDifference)+x*sin(predictAngleDifference);
+    tmp.y=0.1*tmp.y+0.9*lastY;
+    lastY=tmp.y;
+    return buffs.box.center+temp;
+
 
 }

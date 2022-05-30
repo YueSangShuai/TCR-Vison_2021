@@ -24,6 +24,14 @@
 ../header/General.h
 /home/rmtcr/RM/header/General.h
 
+/home/rmtcr/RM/buff_include/predict.h
+iostream
+-
+ceres/ceres.h
+-
+../header/General.h
+/home/rmtcr/RM/header/General.h
+
 /home/rmtcr/RM/buff_src/BuffAngleSolver.cpp
 ../buff_include/BuffAngleSolver.h
 /home/rmtcr/RM/buff_include/BuffAngleSolver.h
@@ -43,6 +51,10 @@ fstream
 -
 iostream
 -
+
+/home/rmtcr/RM/buff_src/predict.cpp
+../buff_include/predict.h
+/home/rmtcr/RM/buff_include/predict.h
 
 /home/rmtcr/RM/header/Filter.h
 iostream
