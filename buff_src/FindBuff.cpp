@@ -10,7 +10,7 @@
 #define BUFF_AREA_RATIO 500.0       //最终大符内轮廓面积与图片面积像素比
 #define BUFFER_BUFF_BOX 4             //大符内轮廓存储缓冲数量
 #define BUFF_CIRCLE_BOX    3             //圆形计算所需个数,应比总数量少1,最后一位为当前识别目标
-#define BUFF_MIN_DISTANCE 50             //两次记录最短间距
+#define BUFF_MIN_DISTANCE 0             //两次记录最短间距
 
 #define G 9.80665
 DrawCurve draw;
@@ -21,7 +21,7 @@ double blueDecay=0.25;
 uint8_t blue_dilateKernelSize=5;
 uint8_t red_dilateKernelSize=5;
 uint8_t binaryThreshold=100;
-uint8_t rRadius=20;
+uint8_t rRadius=10;
 int image_count=0;
 double count_del_angle=0;
 double count_del_time=0;
@@ -67,7 +67,7 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     Buff.image_count=image_count;
     Buff.timestamp=(double)cvGetTickCount();
     image_count++;
-    if(image_count==50)image_count=0;
+    if(image_count==30)image_count=0;
 //    double rotation= BuffBox[3].armoranle-BuffBox[2].armoranle;
 ////    if(rotation<0){
 ////        this->is_rotation=true;
@@ -79,20 +79,19 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
 //    cout<<"rotation"<<rotation<<endl;
     double del_angle= GetAngle(Buff.circle_center,BuffBox[3].box.center,BuffBox[2].box.center)/(180/PI);
     double del_time=(Buff.timestamp-BuffBox[3].timestamp)/(cvGetTickFrequency()*1000000);
-    cout<<"del_angle"<<endl;
+    //cout<<"del_time"<<del_angle<<endl;
     ofstream out_txt_file;
     out_txt_file.open("/home/rmtcr/RM/angle.txt", ios::out | ios::app);
 //    out_txt_file << del_angle<<endl;
-
-//    if(Buff.image_count<49){
-//        count_del_angle+=del_angle;
-//        count_del_time+=del_time;
-//    }else if(Buff.image_count==49){
-//        out_txt_file << count_del_angle/count_del_time<<endl;
-//        cout<<"count_del_angle="<<count_del_angle/count_del_time<<endl;
-//        count_del_angle=0;
-//        count_del_time=0;
-//    }
+    if(Buff.image_count<29){
+        count_del_angle+=del_angle;
+        count_del_time+=del_time;
+    }else if(Buff.image_count==29){
+        //out_txt_file << count_del_angle/count_del_time<<endl;
+       // cout<<"count_del_angle="<<count_del_angle/count_del_time<<endl;
+        count_del_angle=0;
+        count_del_time=0;
+    }
 
     //draw.InsertData(BuffBox[3].armoranle-BuffBox[2].armoranle);
 //    if(del_angle>0.5){
@@ -138,8 +137,8 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     if(BuffNum<3)
         return  (RM_BuffData*)-1;
     //circle(Src,circle_center,CV_AA,Scalar(255,0,0),5);
-
-    cout<<"del_time"<<(BuffBox[3].timestamp-BuffBox[2].timestamp)/(cvGetTickFrequency()*1000)<<endl;
+    //cout<<"del_time"<<(BuffBox[3].timestamp-BuffBox[2].timestamp)/(cvGetTickFrequency()*1000)<<endl;
+    //draw.InsertData(del_time);
     return BuffBox;
 }
 

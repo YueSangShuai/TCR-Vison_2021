@@ -917,7 +917,9 @@ CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.o: ../header/ser
 CMakeFiles/RM.dir/home/rmtcr/CLionProjects/bit_buff/General.cpp.o: /home/rmtcr/CLionProjects/bit_buff/General.cpp
 
 CMakeFiles/RM.dir/main.cpp.o: ../DaHengCamera/DaHengCamera.h
+CMakeFiles/RM.dir/main.cpp.o: ../buff_include/FindBuff.h
 CMakeFiles/RM.dir/main.cpp.o: ../header/DxImageProc.h
+CMakeFiles/RM.dir/main.cpp.o: ../header/General.h
 CMakeFiles/RM.dir/main.cpp.o: ../header/GxIAPI.h
 CMakeFiles/RM.dir/main.cpp.o: ../header/AngleSolver_2.h
 CMakeFiles/RM.dir/main.cpp.o: ../header/Armor.h
