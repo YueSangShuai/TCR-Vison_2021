@@ -31,7 +31,7 @@ bool USE_BUFFER = false;
 ImageGetMode last_model = DAHENG;
 
 FindBuff BuffDetector;
-
+BuffAngleSolver BuffAngleData;
 // 导入装甲板识别类
 ArmorDetector detector;
 // 导入角度解算类
@@ -247,27 +247,29 @@ void ImageProcess::ImageConsumer() {
         }
         else if (Image[(ImageIndex) % BUFFER].mode == BUFF){          // 能量机关(BUFF模式)
             float buff_pitch,buff_yaw;
-
             RM_BuffData *Buffs = BuffDetector.BuffModeSwitch(Image[(ImageIndex) % BUFFER].SrcImage,Image[(ImageIndex) % BUFFER].ReciveStm32.c);
             if (Buffs != (RM_BuffData *) -1) {
-                BuffAngleSolver BuffAngleData;
-                if (is_first_set == false) {
-                    BuffAngleData.GetBuffShootAngle(Buffs, BUFF_FIRST_SHOOT, Image[(ImageIndex) % BUFFER].ReciveStm32);
-                    is_first_set = true;
-                } else {
-                    BuffAngleData.GetBuffShootAngle(Buffs, BUFF_CONTINUE_SHOOT,
-                                                    Image[(ImageIndex) % BUFFER].ReciveStm32);
-                    for (int i = 0; i < 4; i++) {
-                        line(Image[(ImageIndex) % BUFFER].SrcImage, Buffs[3].point[i % 4], Buffs[3].point[(i + 1) % 4],
-                             Scalar(0, 0, 255), 4, 4);
-                    }
-                    circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].circle_center,CV_AA,Scalar(255,0,0),3);
-                    buff_pitch=-Buffs[3].pitch;
-                    buff_yaw=-Buffs[3].yaw;
-                    char test[100];
-                    sprintf(test, "angle:%0.4f", Buffs[3].armoranle*57.3);
-                    cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test, cv::Point(10, 20),
-                                cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 8);
+
+                BuffAngleData.GetBuffShootAngle(Buffs, BUFF_CONTINUE_SHOOT,
+                                                Image[(ImageIndex) % BUFFER].ReciveStm32);
+                for (int i = 0; i < 4; i++) {
+                    line(Image[(ImageIndex) % BUFFER].SrcImage, Buffs[3].point[i % 4], Buffs[3].point[(i + 1) % 4],
+                         Scalar(0, 0, 255), 4, 4);
+                }
+                circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].circle_center,CV_AA,Scalar(255,0,0),3);
+                if(Buffs[3].image_count==maxImage-1){
+                    buff_pitch=Buffs[3].pitch;
+                    buff_yaw=Buffs[3].yaw;
+                    circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].predict,CV_AA,Scalar(255,0,0),3);
+                }else{
+                    buff_pitch=0;
+                    buff_yaw=0;
+                }
+
+                char test[100];
+                sprintf(test, "angle:%0.4f", Buffs[3].armoranle*57.3);
+                cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test, cv::Point(10, 20),
+                            cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 8);
 //                    sprintf(test, "tx:%0.4f", Buffs[3].tx);
 //                    cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test,
 //                                cv::Point(Image[(ImageIndex) % BUFFER].SrcImage.cols / 3, 20), cv::FONT_HERSHEY_SIMPLEX,
@@ -276,14 +278,13 @@ void ImageProcess::ImageConsumer() {
 //                    cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test,
 //                                cv::Point(2 * Image[(ImageIndex) % BUFFER].SrcImage.cols / 3, 20),
 //                                cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 8);
-                    sprintf(test, "yaw:%0.4f ", Buffs[3].yaw);
-                    cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test, cv::Point(10, 40),
-                                cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 8);
-                    sprintf(test, "pitch:%0.4f ", Buffs[3].pitch);
-                    cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test,
-                                cv::Point(Image[(ImageIndex) % BUFFER].SrcImage.cols / 3, 40), cv::FONT_HERSHEY_SIMPLEX,
-                                1, cv::Scalar(255, 255, 255), 1, 8);
-                }
+                sprintf(test, "yaw:%0.4f ", Buffs[3].yaw);
+                cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test, cv::Point(10, 40),
+                            cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 8);
+                sprintf(test, "pitch:%0.4f ", Buffs[3].pitch);
+                cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test,
+                            cv::Point(Image[(ImageIndex) % BUFFER].SrcImage.cols / 3, 40), cv::FONT_HERSHEY_SIMPLEX,
+                            1, cv::Scalar(255, 255, 255), 1, 8);
             }
 //            cout<<"buff_pitch:"<<buff_pitch<<endl;
 //            cout<<"buff_yaw:"<<buff_yaw<<endl;
@@ -300,8 +301,8 @@ void ImageProcess::ImageConsumer() {
 //            continue;
 
         // FPS
-        t1 = static_cast<double>((getTickCount() - t) / getTickFrequency());
-        printf("Armor Detecting FPS: %f\n", 1 / t1);
+//        t1 = static_cast<double>((getTickCount() - t) / getTickFrequency());
+//        printf("Armor Detecting FPS: %f\n", 1 / t1);
 
 #ifdef DEBUG_MODE
         char chKey = cv::waitKey(1);       // 修改waitKey获取的值可以控制视频读取的速率

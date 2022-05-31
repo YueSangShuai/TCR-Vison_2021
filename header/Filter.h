@@ -25,12 +25,12 @@ private:
 public:
     Eigen::VectorXd x_;         //状态向量[锁定目标绝对pitch,锁定目标绝对yaw,v_pitch,v_yaw]
     //状态向量[x,y,v_x,v_y]
-
+    Eigen::VectorXd x_p;
     // 有参数构造函数
     // P_in状态协方差矩阵    Q_in过程噪声矩阵    H_in测量矩阵    R_in测量噪声矩阵
     KF_two(Eigen::MatrixXd P_in, Eigen::MatrixXd Q_in, Eigen::MatrixXd H_in, Eigen::MatrixXd R_in);
     // 传入状态矩阵,进行预测部分计算
-    void Prediction(Eigen::MatrixXd _F);
+    Eigen::MatrixXd Prediction(Eigen::MatrixXd _F);
     // 无参数，代表直接使用类内状态向量和状态矩阵相乘
     Eigen::VectorXd GetPrediction();
     // 有参数，代表与传入状态矩阵相乘

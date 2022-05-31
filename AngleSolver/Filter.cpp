@@ -11,43 +11,27 @@
 KF_two::KF_two(){
     //状态协方差矩阵附初值,搭配绝对位置的移动预测
 
-    Eigen::MatrixXd P_in = Eigen::MatrixXd(6,6);
-    P_in << 1.0, 0.0, 0.0, 0.0,0.0,0.0,
-            0.0, 1.0, 0.0, 0.0,0.0,0.0,
-            0.0, 0.0, 1.0, 0.0,0.0,0.0,
-            0.0, 0.0, 0.0, 1.0,0.0,0.0,
-            0.0, 0.0, 0.0, 0.0,1.0,0.0,
-            0.0, 0.0, 0.0, 0.0,0.0,1.0;
+    Eigen::MatrixXd P_in = Eigen::MatrixXd(2,2);
+    P_in << 1.0, 0.0,
+            0.0,1.0;
     P = P_in;
 
     //过程噪声矩阵附初值
-    Eigen::MatrixXd Q_in(6,6);
-    Q_in<<1.0, 0.0, 0.0, 0.0,0.0,0.0,
-            0.0, 1.0, 0.0, 0.0,0.0,0.0,
-            0.0, 0.0, 1.0, 0.0,0.0,0.0,
-            0.0, 0.0, 0.0, 1.0,0.0,0.0,
-            0.0, 0.0, 0.0, 0.0,1.0,0.0,
-            0.0, 0.0, 0.0, 0.0,0.0,1.0;
+    Eigen::MatrixXd Q_in(2,2);
+    Q_in<<1.0, 0.0,
+            0.0,2;
     Q = Q_in;
 
     //测量矩阵附初值
-    Eigen::MatrixXd H_in(6,6);
-    H_in<<1.0, 0.0, 0.0, 0.0,0.0,0.0,
-            0.0, 1.0,0.0,0.0,0.0,0.00,
-            0.0, 0.0, 1.0, 0.0,0.0,0.0,
-            0.0, 0.0, 0.0, 1.0,0.0,0.0,
-            0.0, 0.0, 0.0, 0.0,1.0,0.0,
-            0.0, 0.0, 0.0, 0.0,0.0,1.0;
+    Eigen::MatrixXd H_in(2,2);
+    H_in<<1.0, 0.0,
+    0.0,1.0;
     H = H_in;
 
     //测量噪声矩阵附初值
-    Eigen::MatrixXd R_in(6,6);
-    R_in<<1.0, 0.0, 0.0, 0.0,0.0,0.0,
-            0.0, 1.0, 0.0, 0.0,0.0,0.0,
-            0.0, 0.0,1, 0.0,0.0,0.0,
-            0.0, 0.0, 0.0, 1.0,0.0,0.0,
-            0.0, 0.0, 0.0, 0.0,1.0,0.0,
-            0.0, 0.0, 0.0, 0.0,0.0,1.0;
+    Eigen::MatrixXd R_in(2,2);
+    R_in<<1,0,
+    0,1;
     R = R_in;
 
 }
@@ -71,8 +55,6 @@ KF_two::KF_two(Eigen::MatrixXd P_in , Eigen::MatrixXd Q_in,Eigen::MatrixXd H_in,
 void KF_two::set_x(Eigen::VectorXd x,Eigen::MatrixXd _F){
     F = _F;
     x_ = x;
-
-
     is_set_x = true;
 }
 
@@ -85,11 +67,12 @@ void KF_two::set_x(Eigen::VectorXd x){
  * @brief KF_two类初始化重载
  * @param _F对应当前状态的状态转移矩阵
  */
-void KF_two::Prediction(Eigen::MatrixXd _F){
+Eigen::MatrixXd KF_two::Prediction(Eigen::MatrixXd _F){
     F = _F;
     //得到预测值
     x_ = F * x_;
     P = F*P*F.transpose() + Q;
+    return x_;
 }
 
 /**
@@ -119,10 +102,14 @@ Eigen::VectorXd KF_two::get_x(){
 //更新状态
 void KF_two::update(Eigen::VectorXd z,Eigen::MatrixXd _F){
     F = _F;
+
     Eigen::MatrixXd y = z - H*x_;
+
     Eigen::MatrixXd S = H*P*H.transpose() + R;
+
     Eigen::MatrixXd K = P*H.transpose()*S.inverse();
     x_ = x_ + (K*y);
+
     int size = x_.size();
 
 //    Eigen::MatrixXd I = Eigen::MatrixXd(size,size);

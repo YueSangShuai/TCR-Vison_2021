@@ -126,7 +126,9 @@ struct RM_BuffData{
     int image_count=0;
     double del_angle=0;
     double del_time=0;
+    Point2f predict;
 };
+static int maxImage=20;//读取帧率的上限
 typedef enum{
     BUFF_FIRST_SHOOT,
     BUFF_CONTINUE_SHOOT,

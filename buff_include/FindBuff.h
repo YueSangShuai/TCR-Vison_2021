@@ -1,6 +1,5 @@
 ﻿#ifndef FINDBUFF_H
 #define FINDBUFF_H
-#include "../header/Filter.h"
 #include"../header/General.h"
 class FindBuff{
 private:

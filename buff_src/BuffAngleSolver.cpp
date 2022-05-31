@@ -1,4 +1,4 @@
-﻿#include"../buff_include/BuffAngleSolver.h"
+#include"../buff_include/BuffAngleSolver.h"
 #include "../header/RemoteController.h"
 #include"../DrawCurve/DraCurve.h"
 #define SHOOT_DELAY_TIME 120                //发弹延迟
@@ -14,6 +14,12 @@ int CircleCenterNumber = 0;                                                     
 int SaveVectorNumber = 0;                                                        //当前存留向量数
 float old_BuffCentralAngle = 0;                                               //上一帧圆心角
 int FrameBlankNumber = 0;
+double predict_angle=0;
+Point2f last_point;
+Point2f now_point;
+Point2f last_center;
+Point2f now_center;
+
 static Point3f old_center;
 Point3f old_Vector;
 Point3f Vectors[MAX_SAVE_CIRCLR_CENTER_NUMBER];
@@ -26,9 +32,7 @@ static CarData old_carDatas;
 bool isHaveSetBuffKF = false;
 DrawCurve draw1;
 
-
-cv::Mat load_tve=cv::Mat::zeros(3,1,CV_64FC1);
-cv::Mat load_rve=cv::Mat::zeros(3,1,CV_64FC1);
+double time1=0;
 
 
 BuffAngleSolver::BuffAngleSolver(){
@@ -42,36 +46,6 @@ BuffAngleSolver::BuffAngleSolver(){
 
     BuffWidth = 23;
     BuffHeight = 12.7;
-    if(!isHaveSetBuffKF){
-        isHaveSetBuffKF = true;
-        //状态协方差矩阵附初值
-
-        Eigen::MatrixXd P_in = Eigen::MatrixXd(2,2);
-        P_in << 1.0, 0.0,
-                0.0,1.0;
-        KF_BuffAngleSpeed.P = P_in;
-
-        //过程噪声矩阵附初值
-        Eigen::MatrixXd Q_in(2,2);
-        Q_in<<1.0, 0.0,
-                0.0,1e-1;
-        KF_BuffAngleSpeed.Q = Q_in;
-
-        //测量矩阵附初值
-        Eigen::MatrixXd H_in(1,2);
-        H_in<<1.0, 0.0;
-        KF_BuffAngleSpeed.H = H_in;
-
-        //测量噪声矩阵附初值
-        Eigen::MatrixXd R_in(1,1);
-        R_in<<1;
-        KF_BuffAngleSpeed.R = R_in;
-
-        Eigen::MatrixXd F_in(2,2);
-        F_in<<1.0,1.0,
-                0.0,1.0;
-        KF_BuffAngleSpeed.F = F_in;
-    }
 }
 
 /**
@@ -94,35 +68,35 @@ void BuffAngleSolver::GetBuffrAngle( RM_BuffData &BestArmor){
  * @param BestArmor
  */
 void BuffAngleSolver::GetBuffShootAngle(RM_BuffData* BestArmor,BuffStatus BuffShootStatus,CarData carDatas){
-    //cout<<"angle:"<<getStm32.yaw<<endl;
-    if(BuffShootStatus == BUFF_FIRST_SHOOT){
-        //各个值初始化
-        CircleCenterNumber = 0;
-        old_BuffCentralAngle = 0;
-        KF_BuffAngleSpeed.is_set_x = false;
-    }
-    //得到各个的坐标
-    GetBuffrAngle(BestArmor[0]);
-    GetBuffrAngle(BestArmor[1]);
-    GetBuffrAngle(BestArmor[2]);
-    GetBuffrAngle(BestArmor[3]);
 
-    Point3d BuffCenter=getWorldPoints(BestArmor[3].circle_center,load_rve,load_tve,caremaMatrix);
-    cout<<"BuffCenter="<<BuffCenter<<endl;
-    CircleCenters[CircleCenterNumber%MAX_SAVE_CIRCLR_CENTER_NUMBER] = BuffCenter;
-    CircleCenterNumber++;
-    if(CircleCenterNumber<MIN_SAVE_CIRCLR_CENTER_NUMBER){
-        //当前记录圆心数量不足
-        return;
-    }
-    if(BestArmor[3].image_count==29){
-       //draw1.InsertData(BestArmor[3].del_angle/BestArmor[3].del_time);
+//    //得到各个的坐标
+//    GetBuffrAngle(BestArmor[0]);
+//    GetBuffrAngle(BestArmor[1]);
+//    GetBuffrAngle(BestArmor[2]);
+//    GetBuffrAngle(BestArmor[3]);
+
+    //Point3d BuffCenter=getWorldPoints(BestArmor[3].circle_center,load_rve,load_tve,caremaMatrix);
+    //cout<<"BuffCenter="<<BuffCenter<<endl;
+//    CircleCenters[CircleCenterNumber%MAX_SAVE_CIRCLR_CENTER_NUMBER] = BuffCenter;
+//    CircleCenterNumber++;
+//    if(CircleCenterNumber<MIN_SAVE_CIRCLR_CENTER_NUMBER){
+//        //当前记录圆心数量不足
+//        return;
+//    }
+    if(BestArmor[3].image_count==maxImage-1){
+        time1=cvGetTickCount()/(cvGetTickFrequency()*1000000);
         float AngleSpeed=BestArmor[3].del_angle;
         float del_time=BestArmor[3].del_time;
-        double temp=BuffKf(AngleSpeed,KF_BuffAngleSpeed,del_time);
-        double anglespeed=AngleSpeed/del_time;
-        draw1.InsertData(anglespeed,temp,"value","predict");
-    }
+        BuffKf(AngleSpeed,KF_BuffAngleSpeed,del_time);
+        BestArmor[3].predict= getPredictPoint(BestArmor[3].circle_center,BestArmor[3].box.center,predict_angle);
+        double time2=cvGetTickCount()/(cvGetTickFrequency()*1000000);
+        Eigen::MatrixXd F_H(2,2);
+        F_H<<1.0 , time2-time1+0.17,
+                0.0 , 1.0;
+        if(KF_BuffAngleSpeed.is_set_x) predict_angle=(F_H*KF_BuffAngleSpeed.x_)(0);
+        BestArmor[3].predict= getPredictPoint(BestArmor[3].circle_center,BestArmor[3].box.center,predict_angle);
+        cout<<"now"<<BestArmor[3].box.center<<endl;
+        cout<<"predict:"<<BestArmor[3].predict<<endl;    }
 //    float AngleSpeed=BestArmor[3].del_angle;
 //    float del_time=BestArmor[3].del_time;
 //    double temp=BuffKf(AngleSpeed,KF_BuffAngleSpeed,del_time);
@@ -239,6 +213,9 @@ void BuffAngleSolver::BuffAngleSpeedFilter(float & AngleSpeed, KF_two Filter,Car
         //第一次设置滤波
         Eigen::VectorXd x(2,1);
         x<<AngleSpeed,0;
+        Eigen::VectorXd x_p(2,1);
+        x_p<<0,0;
+        Filter.x_p=x_p;
         Filter.set_x(x);
     }else{
         //连续滤波
@@ -252,11 +229,11 @@ void BuffAngleSolver::BuffAngleSpeedFilter(float & AngleSpeed, KF_two Filter,Car
         Filter.update(x,F);
     }
     old_AngleSpeed = AngleSpeed;
-    AngleSpeed = Filter.x_(0);
+    AngleSpeed = Filter.x_(1);
 
 }
 
-double BuffAngleSolver::BuffKf(double del_angle,KF_two Filter,double del_time) {
+double BuffAngleSolver::BuffKf(double del_angle,KF_two& Filter,double del_time) {
     if(!Filter.is_set_x){
         //第一次设置滤波
         Eigen::VectorXd x(2,1);
@@ -264,14 +241,21 @@ double BuffAngleSolver::BuffKf(double del_angle,KF_two Filter,double del_time) {
         Filter.set_x(x);
     }else{
         //连续滤波
+//        ofstream erro_file;
+//        erro_file.open("../erro.txt",ios::out | ios::app);
         float a_AngleSpeed = del_angle/del_time;
         Eigen::VectorXd x(2,1);
         x<<del_angle,a_AngleSpeed;
         Eigen::MatrixXd F(2,2);
         F<<1 , del_time,
                 0 , 1;
+
         Filter.Prediction(F);
         Filter.update(x,F);
+        //predict_angle=(x*F)(0);
+//        erro_file<<Filter.x_(0)-del_angle<<endl;
+//        erro_file.close();
+        draw1.InsertData(del_angle,Filter.x_(0),"value","predict");
     }
     return Filter.x_(0);
 }
@@ -448,8 +432,8 @@ void BuffAngleSolver::CountAngleXY(const std::vector<cv::Point2f>&point2D,const 
 
 //     cv::solvePnP(point3D,point2D,caremaMatrix,distCoeffs,rvecs,tvecs,false,SOLVEPNP_UPNP);
     solvePnP(point3D,point2D,caremaMatrix,distCoeffs,rvecs,tvecs);
-    load_tve=tvecs;
-    load_rve=rvecs;
+//    load_tve=tvecs;
+//    load_rve=rvecs;
     double tx = tvecs.ptr<double>(0)[0];
     double ty = -tvecs.ptr<double>(0)[1];
     double tz = tvecs.ptr<double>(0)[2];
@@ -557,3 +541,16 @@ Angle_t BuffAngleSolver::ComputeBuffShootTime(float tx, float ty, float distance
     return ShootBuff;
 }
 
+Point2f BuffAngleSolver::getPredictPoint(Point2f circle_center_point,Point2f target_point,double predictangel) {
+    int x1, x2, y1, y2;
+    x1 = circle_center_point.x * 100;
+    x2 = target_point.x * 100;
+    y1 = circle_center_point.y * 100;
+    y2 = target_point.y * 100;
+    Point2f predict_point;
+    predict_point.x = static_cast<int>(
+            (x1 + (x2 - x1) * cos(-predictangel * 3.14 / 180.0) - (y1 - y2) * sin(-predictangel * 3.14 / 180.0)) / 100);
+    predict_point.y = static_cast<int>(
+            (y1 - (x2 - x1) * sin(-predictangel * 3.14 / 180.0) - (y1 - y2) * cos(-predictangel * 3.14 / 180.0)) / 100);
+    return predict_point;
+}

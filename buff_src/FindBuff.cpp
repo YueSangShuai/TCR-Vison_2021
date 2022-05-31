@@ -68,7 +68,7 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     Buff.timestamp=(float)cvGetTickCount();
 
     image_count++;
-    if(image_count==30)image_count=0;
+    if(image_count==maxImage)image_count=0;
 //    double rotation= BuffBox[3].armoranle-BuffBox[2].armoranle;
 ////    if(rotation<0){
 ////        this->is_rotation=true;
@@ -79,16 +79,17 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
 ////    }
 //    cout<<"rotation"<<rotation<<endl;
     float del_angle= GetAngle(Buff.circle_center,BuffBox[3].box.center,BuffBox[2].box.center)/(180/PI);
-    float del_time=(Buff.timestamp-BuffBox[3].timestamp)/(cvGetTickFrequency()*1000000);
-    ofstream angle_file;
-    ofstream kf_file;
-    angle_file.open("/home/rmtcr/RM/angle.txt", ios::out | ios::app);
-    kf_file.open("/home/rmtcr/RM/kf.txt", ios::out | ios::app);
+    float del_time=(Buff.timestamp-BuffBox[3].timestamp)/(cvGetTickFrequency()*1000000);//    ofstream angle_file;
+//    Buff.del_angle=del_angle;
+//    Buff.del_time=del_time;
+    //    ofstream kf_file;
+//    angle_file.open("/home/rmtcr/RM/angle.txt", ios::out | ios::app);
+//    kf_file.open("/home/rmtcr/RM/kf.txt", ios::out | ios::app);
 //    out_txt_file << del_angle<<endl;
-    if(Buff.image_count<29){
+    if(Buff.image_count<maxImage-1){
         count_del_angle+=del_angle;
         count_del_time+=del_time;
-    }else if(Buff.image_count==29){
+    }else if(Buff.image_count==maxImage-1){
         Buff.del_time=count_del_time;
         Buff.del_angle=count_del_angle;
         count_del_angle=0;
@@ -414,7 +415,7 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
     }
 
 //    cout<<"完成"<<endl;
-    imshow("绘制ing", Src);
+//    imshow("绘制ing", Src);
 //    //保存录像
 //    outputVideo<<dst;
 //    if(!success)
