@@ -260,7 +260,7 @@ void ImageProcess::ImageConsumer() {
                 if(Buffs[3].image_count==maxImage-1){
                     buff_pitch=Buffs[3].pitch;
                     buff_yaw=Buffs[3].yaw;
-                    circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].predict,CV_AA,Scalar(255,0,0),3);
+                    //circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].predict,CV_AA,Scalar(255,0,0),3);
                 }else{
                     buff_pitch=0;
                     buff_yaw=0;

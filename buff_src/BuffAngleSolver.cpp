@@ -91,12 +91,14 @@ void BuffAngleSolver::GetBuffShootAngle(RM_BuffData* BestArmor,BuffStatus BuffSh
         BestArmor[3].predict= getPredictPoint(BestArmor[3].circle_center,BestArmor[3].box.center,predict_angle);
         double time2=cvGetTickCount()/(cvGetTickFrequency()*1000000);
         Eigen::MatrixXd F_H(2,2);
-        F_H<<1.0 , time2-time1+0.17,
+        F_H<<1.0 , time2-time1,
                 0.0 , 1.0;
         if(KF_BuffAngleSpeed.is_set_x) predict_angle=(F_H*KF_BuffAngleSpeed.x_)(0);
         BestArmor[3].predict= getPredictPoint(BestArmor[3].circle_center,BestArmor[3].box.center,predict_angle);
         cout<<"now"<<BestArmor[3].box.center<<endl;
-        cout<<"predict:"<<BestArmor[3].predict<<endl;    }
+        cout<<"predict:"<<BestArmor[3].predict<<endl;
+        GetBuffrAngle(BestArmor[3]);
+    }
 //    float AngleSpeed=BestArmor[3].del_angle;
 //    float del_time=BestArmor[3].del_time;
 //    double temp=BuffKf(AngleSpeed,KF_BuffAngleSpeed,del_time);
