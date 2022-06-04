@@ -3,7 +3,9 @@
 #include "../header/General.h"
 #include <fstream>   // 对文件输入输出
 #include <iostream>  //对屏幕上输入输出
-
+#include <iostream>
+#include <string.h>
+#include <stdlib.h>
 /********************大符调试********************************/
 #define PI 3.14159
 #define BUFF_W_RATIO_H 1.9              //最终大符内轮廓长宽比
@@ -11,21 +13,32 @@
 #define BUFFER_BUFF_BOX 4             //大符内轮廓存储缓冲数量
 #define BUFF_CIRCLE_BOX    3             //圆形计算所需个数,应比总数量少1,最后一位为当前识别目标
 #define BUFF_MIN_DISTANCE 0             //两次记录最短间距
-
 #define G 9.80665
 DrawCurve draw;
+int rotationbool=0;
+int rotationNum=0;
 /*************************************************************/
 RM_BuffData BuffBox[BUFFER_BUFF_BOX];       //存储最近几帧的大符信息
+vector<int> rotationzheng;
+vector<int> rotationfu;
 int BuffNum = 0;
+
 double blueDecay=0.25;
-uint8_t blue_dilateKernelSize=5;
-uint8_t red_dilateKernelSize=5;
+uint8_t red_dilateKernelSize=3;
 uint8_t binaryThreshold=100;
-uint8_t rRadius=10;
+uint8_t rRadius=15;
 int image_count=0;
-double count_del_time=0;
+
+timeval t1;
+double now_dis_angle;
+double last_dis_angle;
+bool is_two=false;
 double count_del_angle=0;
+
+
 /**
+ *
+ *
  * @brief FindBuff::BuffModeSwitch
  * @param Src
  * @return 返回大符识别矩形
@@ -35,18 +48,7 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     Mat dst;
     RM_BuffData Buff;
     PreDelBuff(Src,dst,color);
-    //imshow("Src",Src);
-//    Mat temp;
-//    temp= rgbtohsv(Src,_color);
-//    vector<RotatedRect> BuffClump = FindBestBuff(Src,temp);
     vector<RotatedRect> BuffClump = FindBestBuff(Src,dst);
-//    if(BuffClump.size()!=0){
-//        Point2f center=BuffClump[0].center;
-//        cout<<"center:"<<center;
-//        circle(Src,center,2,Scalar(0,255,0));
-//    }
-
-
     if(BuffClump.size()<=0){
         cout<<"当前大符未识别到目标";
         this->circle_center=Point2f (0,0);
@@ -65,44 +67,53 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     Buff.armoranle= myArctan(Buff.normalizedCenter);
     Buff.box = BuffObject;
     Buff.image_count=image_count;
-    Buff.timestamp=(float)cvGetTickCount();
 
     image_count++;
     if(image_count==maxImage)image_count=0;
-//    double rotation= BuffBox[3].armoranle-BuffBox[2].armoranle;
-////    if(rotation<0){
-////        this->is_rotation=true;
-////        cout<<"顺时针"<<endl;
-////    }else{
-////        this->is_rotation=false;
-////        cout<<"逆时针"<<endl;
-////    }
-//    cout<<"rotation"<<rotation<<endl;
-    float del_angle= GetAngle(Buff.circle_center,BuffBox[3].box.center,BuffBox[2].box.center)/(180/PI);
-    float del_time=(Buff.timestamp-BuffBox[3].timestamp)/(cvGetTickFrequency()*1000000);//    ofstream angle_file;
-//    Buff.del_angle=del_angle;
-//    Buff.del_time=del_time;
-    //    ofstream kf_file;
-//    angle_file.open("/home/rmtcr/RM/angle.txt", ios::out | ios::app);
-//    kf_file.open("/home/rmtcr/RM/kf.txt", ios::out | ios::app);
-//    out_txt_file << del_angle<<endl;
-    if(Buff.image_count<maxImage-1){
-        count_del_angle+=del_angle;
-        count_del_time+=del_time;
-    }else if(Buff.image_count==maxImage-1){
-        Buff.del_time=count_del_time;
-        Buff.del_angle=count_del_angle;
-        count_del_angle=0;
-        count_del_time=0;
+    double rotation= BuffBox[3].armoranle-BuffBox[2].armoranle;
+    if(rotationNum<3*maxImage){
+        if(rotation<0){
+            rotation=1;
+            rotationzheng.push_back(1);
+        }else if(rotation>0){
+            rotation=-1;
+            rotationfu.push_back(0);
+        }
+        rotationNum++;
+    }
+    else
+    {
+        if(rotationzheng.size()>rotationfu.size()){
+            rotationbool=1;
+        }else{
+            rotationbool=-1;
+        }
+       Buff.rotation=rotationbool;
     }
 
-    //draw.InsertData(BuffBox[3].armoranle-BuffBox[2].armoranle);
-//    if(del_angle>0.5){
-//        cout<<"del_angle"<<del_angle;
-//        double anglespeed=del_angle/(BuffBox[3].timestamp-BuffBox[2].timestamp);
-//        cout<<"angle_speed="<<anglespeed<<endl;
-//        draw.InsertData(anglespeed);
-//    }
+    float del_angle= GetAngle(Buff.circle_center,Buff.box.center,BuffBox[3].box.center)*(PI/180);
+    if(Buff.image_count<maxImage-1){
+        count_del_angle+=del_angle;
+    }else{
+        Buff.del_angle=count_del_angle;
+        double predict_angle=0;
+//        if(Buff.rotation==1){
+//            predict_angle=-0.1;
+//        }else if(Buff.rotation==-1){
+//            predict_angle=0.1;
+//        }
+        last_dis_angle=now_dis_angle;
+        now_dis_angle=del_angle;
+        double erro=now_dis_angle-last_dis_angle;
+        Buff.predict= getPredict(Buff.circle_center,Buff.box.center,-0.3);
+        count_del_angle=0;
+        ofstream del_angle_file;
+        del_angle_file.open("/home/rmtcr/RM/del_angle.txt",ios::out | ios::app);
+        del_angle_file<<Buff.del_angle<<endl;
+        del_angle_file.close();
+    }
+
+
     //存入数组,进入分析
     if(BuffNum == 0){
         BuffNum++;
@@ -131,7 +142,7 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
 
         BuffBox[BUFFER_BUFF_BOX-1] = Buff;
     }
-
+    circle(Src,Buff.predict,CV_AA,Scalar(255,0,255),3);
     for(int t = 0;t<3;t++){
         for(int i = 0;i<4;i++){
             line(Src,BuffBox[t].point[(i+1)%4],BuffBox[t].point[i%4],Scalar(255,0,0),1,4);
@@ -139,9 +150,6 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     }
     if(BuffNum<3)
         return  (RM_BuffData*)-1;
-    //circle(Src,circle_center,CV_AA,Scalar(255,0,0),5);
-    //cout<<"del_time"<<(BuffBox[3].timestamp-BuffBox[2].timestamp)/(cvGetTickFrequency()*1000)<<endl;
-    //draw.InsertData(del_time);
     return BuffBox;
 }
 
@@ -152,75 +160,44 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
  * @return
  */
 void FindBuff::PreDelBuff(Mat Src, Mat &dst,int color){
-double t = (double)cvGetTickCount();            //计时
-//    cvtColor(Src,dst,CV_RGB2GRAY);
-//    threshold(dst,dst,40,255,CV_THRESH_BINARY);
-//    cv::Mat gray_element=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(7,7));
-//    dilate(dst,dst,gray_element);
-//    erode(dst,dst,gray_element);
-////    cv::Mat gray_element2=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(3,3));
-////    dilate(dst,dst,gray_element);
-//    imshow("灰度二值化",dst);
-////    vector<Mat> spli;
-//    Mat hsv;
-//    Mat mask;
-//    cvtColor(Src,hsv,CV_RGB2HSV);
-////    split(hsv,spli);
-//    inRange(hsv, Scalar(0, 10, 46), Scalar(180, 60, 255), mask);
-//    dilate(mask,mask,gray_element);
-////    imshow("mask",mask);
-//    dst = dst - mask;
-//    dilate(dst,dst,gray_element);
-//    Mat element=cv::getStructuringElement(cv::MORPH_RECT,cv::Size(3,3));
-//    erode(dst,dst,element);
-
-if(color==2)
-{
-Mat channels[3],mid,bin;
-split(Src,channels);
+if(color==1){
+    Mat channels[3],mid,bin;
+    split(Src,channels);
 //衰减蓝色通道
-for(int i=0;i<Src.cols*Src.rows;i++)
-{
-channels[2].data[i]*=(1-blueDecay);
-}
+    for(int i=0;i<Src.cols*Src.rows;i++)
+    {
+        channels[2].data[i]*=(1-blueDecay);
+    }
 //红通道-蓝通道
-subtract(channels[2],channels[0],mid);
-threshold(mid,bin,binaryThreshold,255,THRESH_BINARY);
-Mat element = getStructuringElement(MORPH_ELLIPSE,Point(red_dilateKernelSize,red_dilateKernelSize));
-dilate(bin,mid,element);
-Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(7,7));
-morphologyEx(mid,bin,MORPH_CLOSE,kernel);
-dst=bin;
-imshow("Src",dst);
-t=(double)cvGetTickCount()-t;
-t = t/(cvGetTickFrequency()*1000);                                //t2为一帧的运行时间,也是单位时间
-printf("used time is %gms\n",t);
+    subtract(channels[0],channels[2],mid);
+    threshold(mid,bin,binaryThreshold,255,THRESH_BINARY);
+    Mat element = getStructuringElement(MORPH_ELLIPSE,Point(red_dilateKernelSize,red_dilateKernelSize));
+    dilate(bin,mid,element);
+    Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(7,7));
+    morphologyEx(mid,bin,MORPH_CLOSE,kernel);
+    dst=bin;
+//    imshow("Src",bin);
 //    imshow("分割",dst);
-}
-else if(color==1){
-Mat channels[3],mid,bin;
-split(Src,channels);
+}else if(color==2){
+    //红色
+    Mat channels[3],mid,bin;
+    split(Src,channels);
 //衰减蓝色通道
-for(int i=0;i<Src.cols*Src.rows;i++)
-{
-channels[0].data[i]*=(1-blueDecay);
-}
-//蓝通道-红通道
-subtract(channels[0],channels[2],mid);
-threshold(mid,bin,binaryThreshold,255,THRESH_BINARY);
-Mat element = getStructuringElement(MORPH_ELLIPSE,Point(blue_dilateKernelSize,blue_dilateKernelSize));
-dilate(bin,mid,element);
-Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(7,7));
-morphologyEx(mid,bin,MORPH_CLOSE,kernel);
-dst=bin;
-imshow("Src",dst);
-t=(double)cvGetTickCount()-t;
-t = t/(cvGetTickFrequency()*1000);                                //t2为一帧的运行时间,也是单位时间
-printf("used time is %gms\n",t);
+    for(int i=0;i<Src.cols*Src.rows;i++)
+    {
+        channels[2].data[i]*=(1-blueDecay);
+    }
+//红通道-蓝通道
+    subtract(channels[2],channels[0],mid);
+    threshold(mid,bin,binaryThreshold,255,THRESH_BINARY);
+    Mat element = getStructuringElement(MORPH_ELLIPSE,Point(red_dilateKernelSize,red_dilateKernelSize));
+    dilate(bin,mid,element);
+    Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(7,7));
+    morphologyEx(mid,bin,MORPH_CLOSE,kernel);
+    dst=bin;
+//    imshow("Src",bin);
 //    imshow("分割",dst);
 }
-
-
 }
 
 /**
@@ -235,98 +212,6 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
     vector<RotatedRect> box_buffs;
     //寻找全部轮廓,用于计算内轮廓数量
     findContours(dst, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_NONE);
-    bool success = false;                               //记录是否成功找到符合要求扇叶
-
-//    for (size_t i = 0; i < hierarchy.size(); i++) {
-//        if (hierarchy[i][2] == -1)continue;
-//        if (contours[i].size() < 6)continue;
-//        RotatedRect box = fitEllipse(contours[i]);
-//
-//        float shanye_bili = box.size.height / box.size.width;
-//        float shanye_area = box.size.height * box.size.height;
-//
-////        if (shanye_bili > 2.9 || (shanye_bili < 1.7 && shanye_bili > 1.5) || shanye_bili < 1.1 ||
-////            box.size.area() < 500)
-////            continue;
-//        ellipse(Src, box, Scalar(255, 0, 255), 5, CV_AA);
-//        int *nei_lunkuo = (int *) malloc(contours.size() * sizeof(int));
-//        memset(nei_lunkuo, 0, contours.size() * sizeof(int));
-//        //判断第一个内轮廓是否符合标准
-//        if (contours[hierarchy[i][2]].size() >= 6) {
-//            RotatedRect first_box = fitEllipse(contours[hierarchy[i][2]]);
-//
-////            cout<<"首个扇叶bili:"<<(float)first_box.size.height/(float)first_box.size.width<<endl;
-////            cout<<"首个面积比1:"<<box.size.area()/first_box.size.area()<<endl;
-////            cout<<"首个轮廓面积："<<(Src.cols*Src.rows)/box.size.area()<<endl;
-//            if (box.size.area() / first_box.size.area() < 10)
-//                *(nei_lunkuo + hierarchy[i][2]) = 1;
-//        }
-//        int j = hierarchy[i][2];
-//        while (hierarchy[j][0] != -1) {
-//            if (contours[hierarchy[j][0]].size() < 6) {
-//                j = hierarchy[j][0];
-//                continue;
-//            }
-//            RotatedRect box2 = fitEllipse(contours[hierarchy[j][0]]);
-//            if (box.size.area() / box2.size.area() > 10) {
-//                j = hierarchy[j][0];
-//                continue;
-//            }
-//            *(nei_lunkuo + hierarchy[j][0]) = 1;
-//            j = hierarchy[j][0];
-//        }
-//        int z = hierarchy[i][2];
-//        while (hierarchy[z][1] != -1) {
-//            if (contours[hierarchy[z][1]].size() < 6) {
-//                z = hierarchy[z][1];
-//                continue;
-//            }
-//            RotatedRect box2 = fitEllipse(contours[hierarchy[j][0]]);
-//            if (box.size.area() / box2.size.area() > 10) {
-//                z = hierarchy[z][1];
-//                continue;
-//            }
-//            if (box.size.area() / box2.size.area() > 7)continue;
-//            *(nei_lunkuo + hierarchy[z][1]) = 1;
-//            z = hierarchy[z][1];
-//        }
-//        int num = 0;
-//        for (int t = 0; t < contours.size(); t++) {
-//            if (*(nei_lunkuo + t) == 1) {
-//                num++;
-//            }
-//        }
-// //       cout << "内轮廓数量:" << num << endl;
-//        if (num == 1) {
-//            success = true;
-//            if (contours[hierarchy[i][2]].size() < 6)continue;
-//            RotatedRect box_buff = fitEllipse(contours[hierarchy[i][2]]);
-//            if (box_buff.angle < 5 || box_buff.angle > 175) {
-//                if (box.angle > 5 && box.angle < 175)continue;
-//            } else {
-//                if (!((tan(box_buff.angle * PI / 180) * tan(box.angle * PI / 180) + 1) < 0.3 ||
-//                      (box_buff.angle - box.angle) < 5))
-//                    continue;
-//            }
-////            cout<<"轮廓面积最终比："<<(Src.cols*Src.rows)/box_buff.size.area()<<endl;
-//            box_buffs.push_back(box_buff);
-//            ellipse(Src, box_buff, Scalar(255, 0, 0), 5, CV_AA);
-//        }
-//        free(nei_lunkuo);
-////        if(num == 2){
-////            if(contours[hierarchy[i][2]].size()<6)continue;
-////            RotatedRect box = fitEllipse(contours[hierarchy[i][2]]);
-//
-////            ellipse(dst, box, Scalar(0,255,0), 5, CV_AA);
-////            if(hierarchy[hierarchy[i][2]][0] != -1){
-////                if(contours[hierarchy[hierarchy[i][2]][0]].size()<6)continue;
-////                RotatedRect box = fitEllipse(contours[hierarchy[hierarchy[i][2]][0]]);
-//
-////                ellipse(dst, box, Scalar(0,0,255), 5, CV_AA);
-////            }
-////        }
-//
-//    }
     if (contours.size() > 2) {
         vector<Point> possibleCenter;
         for (uint i = 0; i < contours.size(); i++) {
@@ -344,8 +229,8 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
                         aspectRatio = 1 / aspectRatio;
                     //qDebug()<<"面积:"<<area<<",长宽比:"<<aspectRatio<<",面积比:"<<areaRatio<<endl;
                     //TODO:确定实际装甲板面积、长宽比、面积占比
-                    if (area > 100&& aspectRatio < 0.76 && areaRatio > 0.6 ) {
-                        ellipse(dst, rect, Scalar(0,255,0), 5, CV_AA);
+                    if (area<1000&&area > 500&& aspectRatio < 0.76 && areaRatio > 0.75) {
+                        ellipse(Src, rect, Scalar(0,255,0), 5, CV_AA);
                         box_buffs.push_back(rect);
                     }
                 }
@@ -399,14 +284,14 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
                 //计算与目标装甲板中心的夹角
                 angle=acos((x4*x1+y1*y4)/dd1/d1)*57.3;
 
-                int minRadius=50;
-                int maxRadius=200;
+                int minRadius=30;
+                int maxRadius=100;
                 //根据半径范围和与短边（锤子柄）的角度筛选出中心R
                 if(d1>minRadius && d1 < maxRadius )
                 {
                     Mat debug=src.clone();
                     circle_center=p;
-                    //circle(Src,p,CV_AA,Scalar(255,0,0),8);
+                    circle(Src,p,CV_AA,Scalar(255,0,0),8);
                     //imshow("绘制ing",Src);
                     break;
                 }
@@ -415,7 +300,7 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
     }
 
 //    cout<<"完成"<<endl;
-//    imshow("绘制ing", Src);
+ //   imshow("绘制ing", Src);
 //    //保存录像
 //    outputVideo<<dst;
 //    if(!success)
@@ -468,4 +353,16 @@ double FindBuff::getCenterAngle(Point2f circle_center, Point2f center) {
             angle_recent_2PI = -angle_recent;
 return angle_recent_2PI;
 }
-
+Point2f FindBuff::getPredict (Point2f circle_center_point,Point2f target_point,double predictangel) {
+int x1, x2, y1, y2;
+x1 = circle_center_point.x * 100;
+x2 = target_point.x * 100;
+y1 = circle_center_point.y * 100;
+y2 = target_point.y * 100;
+Point2f predict_point;
+predict_point.x = static_cast<int>(
+        (x1 + (x2 - x1) * cos(-predictangel * 180 / PI) - (y1 - y2) * sin(-predictangel * 180 / PI)) / 100);
+predict_point.y = static_cast<int>(
+        (y1 - (x2 - x1) * sin(-predictangel * 180 / PI) - (y1 - y2) * cos(-predictangel * 180 / PI)) / 100);
+return predict_point;
+}

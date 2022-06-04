@@ -1,78 +1,151 @@
-//
-// Created by rmtcr on 2022/5/27.
-//
-
 #include "../buff_include/predict.h"
-static int is_count=50;
-//非线性拟合代价函数
-struct CURVE_FITTING_COST
-{
-    //构造函数
-    CURVE_FITTING_COST ( double x, double y,float tau) : _tau(tau),_x ( x ), _y ( y ) {}
-    // 残差的计算
-    float _tau;
-    template <typename T>
-    bool operator() (
-            const T* const phi,       // 待拟合参数，有1维
-            T* residual ) const     // 残差
-    {
-        auto value = 1.305*_tau + 0.41666666667*(-ceres::cos(phi[0]+(1.884*_x)) + ceres::cos(phi[0]+1.884*(-_tau+_x)));
-//        auto value = 1.305*_tau+0.4166666667*(-2)* sin(-1.884*_tau/2)*ceres::sin(phi[0]+1.884*_x+(1.884*_tau/2));
-        residual[0] = T(_y) - value;
-        return true;
-    }
-    const double _x, _y;    // x,y数据
-};
-predict::predict(){
-    options.linear_solver_type = ceres::DENSE_QR;   // 增量方程如何求解
-    options.minimizer_progress_to_stdout = false;   // 不输出到控制台
-    options.num_threads=3;
+/*
+    * Date: 2022.3.9
+    * Details: 卡尔曼滤波工具类
+*/
 
+#include "../header/Filter.h"
+
+//一阶卡尔曼预测
+
+// 无参数构造函数
+ekf::ekf(){
+    //状态协方差矩阵附初值,搭配绝对位置的移动预测
+
+    Eigen::MatrixXd P_in = Eigen::MatrixXd(2,2);
+    P_in << 1.0, 0.0,
+            0.0,1.0;
+    P = P_in;
+
+    //过程噪声矩阵附初值
+    Eigen::MatrixXd Q_in(2,2);
+    Q_in<<1.0, 0.0,
+            0.0,1;
+    Q = Q_in;
+
+    //测量矩阵附初值
+    Eigen::MatrixXd H_in(2,2);
+    H_in<<1.0, 0.0,
+            0.0,1.0;
+    H = H_in;
+
+    //测量噪声矩阵附初值
+    Eigen::MatrixXd R_in(2,2);
+    R_in<<1,0,
+            0,1;
+    R = R_in;
 }
-double predict::NiHe(double del_time,double del_angle,int tao,int sample) {
-    double _phi[1]={0.0};
-    problem->AddResidualBlock (     // 向问题中添加误差项
-            // 使用自动求导，模板参数：误差类型，输出维度，输入维度，维数要与前面struct中一致
-            new ceres::AutoDiffCostFunction<CURVE_FITTING_COST, 1, 1> (
-                    //以开始拟合的一帧作为时间轴原点，其余帧与其计算相对时间
-                    new CURVE_FITTING_COST (del_time,(double)del_angle,tao)
-            ),
-            nullptr,            // 核函数，这里不使用，为空
-            _phi                 // 待估计参数
-    );
-    if(sample>is_count){
-        ceres::Solver::Summary summary;                // 优化信息
-        ceres::Solve ( options,problem, &summary );  // 开始优化
-        phi=_phi[0];
-        last_phi=phi;
-    }else{
-        std::cout<<"未能信任这份结果"<<std::endl;
-    }
-    delete problem;
+
+/**
+ * @brief KF_two类初始化重载
+ * @param P_in状态协方差矩阵   Q_in过程噪声矩阵  H_in测量矩阵    R_in测量噪声矩阵
+ */
+ekf::ekf(Eigen::MatrixXd P_in , Eigen::MatrixXd Q_in,Eigen::MatrixXd H_in,Eigen::MatrixXd R_in){
+    P = P_in;
+    Q = Q_in;
+    H = H_in;
+    R = R_in;
 }
-float predict::pos_fun(float t,float phi)
-{
-    return (1.305 * t) - (0.416666666666667 * cos(1.884 *t + phi ));
+
+
+/**
+ * @brief 给状态向量附初值
+ * @param x 状态向量初值      _F状态转移矩阵
+ */
+void ekf::set_x(Eigen::VectorXd x,Eigen::MatrixXd _F){
+    F = _F;
+    x_ = x;
+    is_set_x = true;
 }
-Point2f predict::getPredictPoint(RM_BuffData buffs,double predictime,double passtime,int rotation) {
-    static float lastX,lastY;
-    Point2f tmp;
-    float predictAngleDifference=0.0;
-    predictAngleDifference = pos_fun(predictime+passtime,phi)-pos_fun(passtime,phi);
-    if(rotation==1){
-        predictAngleDifference=-predictAngleDifference;
+
+void ekf::set_x(Eigen::VectorXd x){
+    x_ = x;
+    is_set_x = true;
+}
+
+/**
+ * @brief KF_two类初始化重载
+ * @param _F对应当前状态的状态转移矩阵
+ */
+Eigen::MatrixXd ekf::Prediction(Eigen::MatrixXd _F){
+    F = _F;
+    //得到预测值
+    x_ = F * x_;
+    P = F*P*F.transpose() + Q;
+    return x_;
+}
+
+/**
+ * @brief KF_two 返回相乘量
+ * @param _F对应当前状态的状态转移矩阵
+ * @return 状态向量
+ */
+Eigen::VectorXd ekf::GetPrediction(Eigen::MatrixXd _F){
+    return _F*x_;
+}
+
+/**
+ * @brief KF_two::GetPrediction
+ */
+Eigen::VectorXd ekf::GetPrediction(){
+    return F*x_;
+}
+
+/**
+ * @brief 返回状态向量，获得预测值
+ * @return 状态向量
+ */
+Eigen::VectorXd ekf::get_x(){
+    return x_;
+}
+
+//更新状态
+void ekf::update(Eigen::VectorXd z,Eigen::MatrixXd _F){
+    F = _F;
+
+    Eigen::MatrixXd y = z - H*x_;
+
+    Eigen::MatrixXd S = H*P*H.transpose() + R;
+
+    Eigen::MatrixXd K = P*H.transpose()*S.inverse();
+    x_ = x_ + (K*y);
+
+    int size = x_.size();
+
+//    Eigen::MatrixXd I = Eigen::MatrixXd(size,size);
+    if(size == 4){
+        Eigen::MatrixXd I(4,4);
+        I << 1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1;
+        P = (I - K*H)*P;
     }
-    float x=buffs.normalizedCenter.x;
-    float y=buffs.normalizedCenter.y;
-    Point2f temp;
-    tmp.x=x*cos(predictAngleDifference)-y*sin(predictAngleDifference);
-    tmp.x=0.1*tmp.x+0.9*lastX;
-    lastX=tmp.x;
 
-    tmp.y=y*cos(predictAngleDifference)+x*sin(predictAngleDifference);
-    tmp.y=0.1*tmp.y+0.9*lastY;
-    lastY=tmp.y;
-    return buffs.box.center+temp;
+    if(size == 2){
+        Eigen::MatrixXd I(2,2);
+        I << 1, 0,
+                0,1;
+        P = (I - K*H)*P;
+    }
 
+    if(size == 6){
+        Eigen::MatrixXd I(6,6);
+        I << 1.0, 0.0, 0.0, 0.0,0.0,0.0,
+                0.0, 1.0, 0.0, 0.0,0.0,0.0,
+                0.0, 0.0, 1.0, 0.0,0.0,0.0,
+                0.0, 0.0, 0.0, 1.0,0.0,0.0,
+                0.0, 0.0, 0.0, 0.0,1.0,0.0,
+                0.0, 0.0, 0.0, 0.0,0.0,1.0;
+        P = (I - K*H)*P;
+    }
 
+    if(size == 4){
+        Eigen::MatrixXd I(4,4);
+        I << 1.0, 0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                0.0, 0.0, 0.0, 1.0;
+        P = (I - K*H)*P;
+    }
 }

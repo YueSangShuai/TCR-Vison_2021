@@ -53,7 +53,7 @@ void DrawCurve::InsertData(float Data){
     Times++;
 }
 
-void DrawCurve::InsertData(float Data1,float Data2,string s1,string s2){
+void DrawCurve::InsertData(float Data1,float Data2,string s1,string s2,string window_name){
     //创建用于绘制的深蓝色背景图像
     cv::Mat image = cv::Mat::zeros(480, 640, CV_8UC3);
     image.setTo(cv::Scalar(100, 0, 0));
@@ -122,11 +122,11 @@ void DrawCurve::InsertData(float Data1,float Data2,string s1,string s2){
     cv::putText(image, s1, cv::Point(60, 25), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 2);
     cv::putText(image, s2, cv::Point(60, 55), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 2);
 
-    imshow("波形图",image);
+    imshow(window_name,image);
 //    imshow("波形图2",image2);
     char key = waitKey(1);
     if(key == 'p'){
-        imwrite("/home/xiejiapeng/图片/波形图/滤波后pitch波形图.jpg",image);
+        imwrite("/home/rmtcr/图片/滤波后pitch波形图.jpg",image);
     }
     Times++;
 }

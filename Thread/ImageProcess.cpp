@@ -170,7 +170,7 @@ void ImageProcess::ImageConsumer() {
 //        if (USE_BUFFER == false)
 //            Image[(ImageIndex) % BUFFER].mode = DAHENG;
 //        else
-            Image[ImageIndex%BUFFER].mode=BUFF;
+            //Image[ImageIndex%BUFFER].mode=BUFF;
         if (Image[(ImageIndex) % BUFFER].mode == DAHENG) {        // 自瞄(非BUFF模式)
             // 设置敌方战车灯条颜色
             detector.setEnemyColor(ENEMYCOLOR);
@@ -248,28 +248,32 @@ void ImageProcess::ImageConsumer() {
         else if (Image[(ImageIndex) % BUFFER].mode == BUFF){          // 能量机关(BUFF模式)
             float buff_pitch,buff_yaw;
             RM_BuffData *Buffs = BuffDetector.BuffModeSwitch(Image[(ImageIndex) % BUFFER].SrcImage,Image[(ImageIndex) % BUFFER].ReciveStm32.c);
-            if (Buffs != (RM_BuffData *) -1) {
-
+            if (Buffs != (RM_BuffData *) -1)
+            {
                 BuffAngleData.GetBuffShootAngle(Buffs, BUFF_CONTINUE_SHOOT,
                                                 Image[(ImageIndex) % BUFFER].ReciveStm32);
                 for (int i = 0; i < 4; i++) {
                     line(Image[(ImageIndex) % BUFFER].SrcImage, Buffs[3].point[i % 4], Buffs[3].point[(i + 1) % 4],
                          Scalar(0, 0, 255), 4, 4);
                 }
-                circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].circle_center,CV_AA,Scalar(255,0,0),3);
+                //circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].circle_center,CV_AA,Scalar(255,0,0),3);
                 if(Buffs[3].image_count==maxImage-1){
-                    buff_pitch=Buffs[3].pitch;
-                    buff_yaw=Buffs[3].yaw;
-                    //circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].predict,CV_AA,Scalar(255,0,0),3);
-                }else{
-                    buff_pitch=0;
-                    buff_yaw=0;
-                }
-
-                char test[100];
-                sprintf(test, "angle:%0.4f", Buffs[3].armoranle*57.3);
-                cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test, cv::Point(10, 20),
-                            cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 8);
+                    //上+pith 右-yaw
+                    buff_pitch=Buffs[3].pitch-11.5+0.5;
+                    buff_yaw=-Buffs[3].yaw-14.5-0.5;
+                    //circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].predict,CV_AA,Scalar(255,0,0),3)
+//                    if(Buffs[3].rotation==1){
+//                        buff_pitch=Buffs[3].pitch-12;
+//                        buff_yaw=-Buffs[3].yaw-14+1.3;
+//                    }else if(Buffs[3].rotation==-1){
+//                        buff_pitch=-(Buffs[3].pitch-12+0.7);
+//                        buff_yaw=(Buffs[3].yaw+14+1.3);
+//                    }
+                    circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].predict,CV_AA,Scalar(255,0,255),3);
+                    char test[100];
+                    sprintf(test, "angle:%0.4f", Buffs[3].armoranle*57.3);
+                    cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test, cv::Point(10, 20),
+                                cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 8);
 //                    sprintf(test, "tx:%0.4f", Buffs[3].tx);
 //                    cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test,
 //                                cv::Point(Image[(ImageIndex) % BUFFER].SrcImage.cols / 3, 20), cv::FONT_HERSHEY_SIMPLEX,
@@ -278,24 +282,28 @@ void ImageProcess::ImageConsumer() {
 //                    cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test,
 //                                cv::Point(2 * Image[(ImageIndex) % BUFFER].SrcImage.cols / 3, 20),
 //                                cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 8);
-                sprintf(test, "yaw:%0.4f ", Buffs[3].yaw);
-                cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test, cv::Point(10, 40),
-                            cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 8);
-                sprintf(test, "pitch:%0.4f ", Buffs[3].pitch);
-                cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test,
-                            cv::Point(Image[(ImageIndex) % BUFFER].SrcImage.cols / 3, 40), cv::FONT_HERSHEY_SIMPLEX,
-                            1, cv::Scalar(255, 255, 255), 1, 8);
+                    sprintf(test, "yaw:%0.4f ", buff_yaw);
+                    cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test, cv::Point(10, 40),
+                                cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 8);
+                    sprintf(test, "pitch:%0.4f ", buff_pitch);
+                    cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test,
+                                cv::Point(Image[(ImageIndex) % BUFFER].SrcImage.cols / 3, 40), cv::FONT_HERSHEY_SIMPLEX,
+                                1, cv::Scalar(255, 255, 255), 1, 8);
+                    cv::namedWindow("绘制",WINDOW_FULLSCREEN);
+                    //imshow("绘制",Image[(ImageIndex)%BUFFER].SrcImage);
+                    ArmorToData(Shoot,buff_pitch,buff_yaw);
+                }else{
+                    buff_pitch=0;
+                    buff_yaw=0;
+                }
             }
-//            cout<<"buff_pitch:"<<buff_pitch<<endl;
-//            cout<<"buff_yaw:"<<buff_yaw<<endl;
-            // ArmorToData(Shoot,buff_pitch,buff_yaw);
+            else
+            {
+                buff_pitch=0;
+                buff_yaw=0;
+                ArmorToData(Shoot,buff_pitch,buff_yaw);
+            }
 
-            ArmorToData(Shoot,buff_pitch,buff_yaw);
-            char test[100];
-            sprintf(test, "getPitch:%0.4f   getYaw:%0.4f", Image[(ImageIndex)%BUFFER].ReciveStm32.pitch,Image[(ImageIndex)%BUFFER].ReciveStm32.yaw);
-//        cv::putText(Image[(ImageIndex)%BUFFER].SrcImage, test, cv::Point(10, 70), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1, 8);
-            cv::namedWindow("绘制",WINDOW_FULLSCREEN);
-            imshow("绘制",Image[(ImageIndex)%BUFFER].SrcImage);
         }
 //        else
 //            continue;
