@@ -23,19 +23,19 @@ vector<int> rotationzheng;
 vector<int> rotationfu;
 int BuffNum = 0;
 
-double blueDecay=0.25;
+double blueDecay=0.75;
 uint8_t red_dilateKernelSize=3;
-uint8_t binaryThreshold=100;
+uint8_t binaryThreshold=140;
 uint8_t rRadius=15;
 int image_count=0;
-
-timeval t1;
-double now_dis_angle;
-double last_dis_angle;
-bool is_two=false;
 double count_del_angle=0;
-
-
+double count_del_time=0;
+double begin_time;
+bool isset=false;
+double is_pass_time=0;
+double last_angle=0;
+double predict_angle;
+KF_two anglefilter;
 /**
  *
  *
@@ -67,6 +67,7 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     Buff.armoranle= myArctan(Buff.normalizedCenter);
     Buff.box = BuffObject;
     Buff.image_count=image_count;
+    Buff.timestamp=(double)cvGetTickCount()/(cvGetTickFrequency()*1000000);
 
     image_count++;
     if(image_count==maxImage)image_count=0;
@@ -92,28 +93,38 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     }
 
     float del_angle= GetAngle(Buff.circle_center,Buff.box.center,BuffBox[3].box.center)*(PI/180);
+    float  del_time=Buff.timestamp-BuffBox[3].timestamp;
     if(Buff.image_count<maxImage-1){
         count_del_angle+=del_angle;
-    }else{
+        count_del_time+=del_time;
+    }else if(Buff.image_count==maxImage-1){
         Buff.del_angle=count_del_angle;
-        double predict_angle=0;
-//        if(Buff.rotation==1){
-//            predict_angle=-0.1;
-//        }else if(Buff.rotation==-1){
-//            predict_angle=0.1;
-//        }
-        last_dis_angle=now_dis_angle;
-        now_dis_angle=del_angle;
-        double erro=now_dis_angle-last_dis_angle;
-        Buff.predict= getPredict(Buff.circle_center,Buff.box.center,-0.3);
+        Buff.del_time=count_del_time;
         count_del_angle=0;
-        ofstream del_angle_file;
-        del_angle_file.open("/home/rmtcr/RM/del_angle.txt",ios::out | ios::app);
-        del_angle_file<<Buff.del_angle<<endl;
-        del_angle_file.close();
+        count_del_time=0;
     }
 
+    double temp=calStartTimeInPeriod(Buff.del_time,Buff.del_angle);
+    if(!std::isnan(temp)&&isset==false){
+        begin_time=temp;
+        isset=true;
+    }
+    if(begin_time!=0){
+        circle(Src,Buff.predict,CV_AA,Scalar(255,0,255),3);
+        is_pass_time+=del_time;
+        last_angle=predict_angle;
+        predict_angle=calPredictAngleByPeriod(begin_time,is_pass_time);
 
+        double temp=predict_angle-last_angle;
+
+        circle(Src,Buff.predict,CV_AA,Scalar(255,0,255),3);
+        cout<<"del_angle"<<Buff.del_angle<<endl;
+        cout<<"predict_angle"<<predict_angle<<endl;
+        KF_angle(temp,anglefilter);
+        draw.InsertData(temp,anglefilter.x_(0),"value","predict","angleboxing");
+
+        Buff.predict= getPredict(Buff.circle_center,Buff.box.center,anglefilter.x_(0));
+    }
     //存入数组,进入分析
     if(BuffNum == 0){
         BuffNum++;
@@ -121,7 +132,8 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
         for(int i = 0;i<BUFFER_BUFF_BOX;i++){
             BuffBox[i] = Buff;
         }
-    }else{
+    }
+    else{
         //已初始化,进入连续计算
         int index = -1;
         float max_distance = 0;
@@ -142,7 +154,7 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
 
         BuffBox[BUFFER_BUFF_BOX-1] = Buff;
     }
-    circle(Src,Buff.predict,CV_AA,Scalar(255,0,255),3);
+
     for(int t = 0;t<3;t++){
         for(int i = 0;i<4;i++){
             line(Src,BuffBox[t].point[(i+1)%4],BuffBox[t].point[i%4],Scalar(255,0,0),1,4);
@@ -176,7 +188,7 @@ if(color==1){
     Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(7,7));
     morphologyEx(mid,bin,MORPH_CLOSE,kernel);
     dst=bin;
-//    imshow("Src",bin);
+    imshow("Src",bin);
 //    imshow("分割",dst);
 }else if(color==2){
     //红色
@@ -185,7 +197,7 @@ if(color==1){
 //衰减蓝色通道
     for(int i=0;i<Src.cols*Src.rows;i++)
     {
-        channels[2].data[i]*=(1-blueDecay);
+        channels[0].data[i]*=(1-blueDecay);
     }
 //红通道-蓝通道
     subtract(channels[2],channels[0],mid);
@@ -195,7 +207,7 @@ if(color==1){
     Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(7,7));
     morphologyEx(mid,bin,MORPH_CLOSE,kernel);
     dst=bin;
-//    imshow("Src",bin);
+    imshow("Src",bin);
 //    imshow("分割",dst);
 }
 }
@@ -229,7 +241,7 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
                         aspectRatio = 1 / aspectRatio;
                     //qDebug()<<"面积:"<<area<<",长宽比:"<<aspectRatio<<",面积比:"<<areaRatio<<endl;
                     //TODO:确定实际装甲板面积、长宽比、面积占比
-                    if (area<1000&&area > 500&& aspectRatio < 0.76 && areaRatio > 0.75) {
+                    if (area > 100&& aspectRatio < 0.8 && areaRatio > 0.6) {
                         ellipse(Src, rect, Scalar(0,255,0), 5, CV_AA);
                         box_buffs.push_back(rect);
                     }
@@ -300,7 +312,7 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
     }
 
 //    cout<<"完成"<<endl;
- //   imshow("绘制ing", Src);
+    imshow("绘制ing", Src);
 //    //保存录像
 //    outputVideo<<dst;
 //    if(!success)
@@ -365,4 +377,19 @@ predict_point.x = static_cast<int>(
 predict_point.y = static_cast<int>(
         (y1 - (x2 - x1) * sin(-predictangel * 180 / PI) - (y1 - y2) * cos(-predictangel * 180 / PI)) / 100);
 return predict_point;
+}
+void FindBuff::KF_angle(double angle,KF_two& Filter) {
+    if(!Filter.is_set_x){
+        //第一次设置滤波
+        Eigen::VectorXd x(1,1);
+        x<<angle;
+        Filter.set_x(x);
+    }else{
+        Eigen::VectorXd x(1,1);
+        x<<angle;
+        Eigen::MatrixXd F(1,1);
+        F<<   1;
+        Filter.Prediction(F);
+        Filter.update(x,F);
+    }
 }

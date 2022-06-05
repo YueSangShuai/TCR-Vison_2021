@@ -1,6 +1,7 @@
 ﻿#ifndef FINDBUFF_H
 #define FINDBUFF_H
 #include"../header/General.h"
+#include "../header/Filter.h"
 class FindBuff{
 private:
     void PreDelBuff(Mat Src, Mat &dst,int color);
@@ -10,24 +11,29 @@ private:
     Point2f getPredict(Point2f circle_center_point,Point2f target_point,double predictangel);
     Point2f circle_center;
     bool is_rotation=true;
-    double upbuchagn(double x){
-        double a0 =      0.4932 ;
-        double a1 =     -0.3288 ;
-        double b1 =     0.03847 ;
-        double w =       5.079;
-        double temp= a0 + a1*cos(x*w) + b1*sin(x*w);
-        return temp;
+    void KF_angle(double angle,KF_two& Filter);
+    double calStartTimeInPeriod(float angle_diff_of_interval, double time_interval)
+    {
+        double amplitude = 0.785;
+        double angular_frequency = 1.884;
+        double initial_phase = 0;
+        double const_number = 1.305;
+        double temp_formulation_1 = angular_frequency * (angle_diff_of_interval - const_number * time_interval) / (2 * amplitude);
+        double temp_formulation_2 = sin(angular_frequency * time_interval / 2);
+        double time_begin = (asin(temp_formulation_1 / temp_formulation_2) - initial_phase) / angular_frequency - time_interval / 2;
+        return time_begin;
     }
-    double downbuchagn(double x){
-        double a0 =      0.7271  ;
-        double a1 =     0.07821 ;
-        double b1 =      0.2114  ;
-        double a2 =    -0.08488  ;
-        double b2 =     0.01165 ;
-        double w =        6.78 ;
-        double temp= a0 + a1*cos(x*w) + b1*sin(x*w) +
-                     a2*cos(2*x*w) + b2*sin(2*x*w);
-        return  temp;
+    double calPredictAngleByPeriod(double time_begin, double time_interval)
+    {
+        double angular_frequency = 1.884;
+        double amplitude = 0.785;
+        double initial_phase = 0;
+        double const_number = 1.305;
+        float angular_frequency_half = angular_frequency / 2;
+        //积分计算角度（弧度）
+        double rotate_angle = amplitude / angular_frequency_half * sin( angular_frequency_half * (2 * time_begin + time_interval) + initial_phase )
+                              * sin( angular_frequency_half * time_interval ) + const_number * time_interval;
+        return rotate_angle;
     }
 public:
     RM_BuffData* BuffModeSwitch(Mat Src,int color);

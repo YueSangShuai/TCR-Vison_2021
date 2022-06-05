@@ -21,6 +21,6 @@
 <ExpTime>
   <UsbExpTime>10</UsbExpTime>
   <UsbAspTime>20</UsbAspTime>
-  <DahengExpTime>6000</DahengExpTime>
+  <DahengExpTime>8000</DahengExpTime>
   <DahengGain>0</DahengGain></ExpTime>
 </opencv_storage>

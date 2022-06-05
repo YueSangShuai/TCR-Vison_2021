@@ -112,9 +112,7 @@ struct ImageDate {
 };
 //待击打大符信息
 struct RM_BuffData{
-    float tx = 0;
-    float ty = 0;
-    float tz = 0;
+
     float pitch = 0;
     float yaw = 0;
     RotatedRect box;
@@ -126,12 +124,10 @@ struct RM_BuffData{
     int image_count=0;
     double del_angle=0;
     double del_time=0;
-    double length=0;
-    double width=0;
     Point2f predict;
     int rotation=0;
 };
-static int maxImage=20;//读取帧率的上限
+static int maxImage=15;//读取帧率的上限
 typedef enum{
     BUFF_FIRST_SHOOT,
     BUFF_CONTINUE_SHOOT,
@@ -335,40 +331,5 @@ inline float myArctan(Point2f p)
 {
     float angle = atan2(p.y,p.x);
     return fmod(CV_2PI-angle,CV_2PI);
-}
-inline void getLW(RM_BuffData& buff){
-    float x2,x3,x4,y2,y3,y4;
-    //获取目标装甲板的四个角点
-    Point2f vectors[4];
-    buff.box.points(vectors);
-    float dd1= getPointsDistance(vectors[0],vectors[1]);
-    float dd2= getPointsDistance(vectors[1],vectors[2]);
-    if(dd1<dd2)
-    {
-        x2=buff.box.center.x-vectors[0].x;
-        y2=buff.box.center.y-vectors[0].y;
-        x3=buff.box.center.x-vectors[1].x;
-        y3=buff.box.center.y-vectors[1].y;
-        dd2=dd1;
-    }
-    else
-    {
-        x2=buff.box.center.x-vectors[1].x;
-        y2=buff.box.center.y-vectors[1].y;
-        x3=buff.box.center.x-vectors[2].x;
-        y3=buff.box.center.y-vectors[2].y;
-        dd1=dd2;
-    }
-    buff.length=dd1;
-    buff.width=dd2;
-}
-inline string getCurrentTime0() {
-    std::time_t result = std::time(nullptr);
-
-    std::string ret;
-    ret.resize(64);
-    int wsize = sprintf((char *)&ret[0], "%s", std::ctime(&result));
-    ret.resize(wsize);
-    return ret;
 }
 #endif //RM_GENERAL_H

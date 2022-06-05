@@ -11,27 +11,23 @@
 KF_two::KF_two(){
     //状态协方差矩阵附初值,搭配绝对位置的移动预测
 
-    Eigen::MatrixXd P_in = Eigen::MatrixXd(2,2);
-    P_in << 1.0, 0.0,
-            0.0,1.0;
+    Eigen::MatrixXd P_in = Eigen::MatrixXd(1,1);
+    P_in << 1.0;
     P = P_in;
 
     //过程噪声矩阵附初值
-    Eigen::MatrixXd Q_in(2,2);
-    Q_in<<1.0, 0.0,
-            0.0,0.1;
-    Q = Q_in;
+    Eigen::MatrixXd Q_in(1,1);
+    Q_in<<1.0;
+    Q = Q_in*0.1;
 
     //测量矩阵附初值
-    Eigen::MatrixXd H_in(2,2);
-    H_in<<1.0, 0.0,
-    0.0,1.0;
+    Eigen::MatrixXd H_in(1,1);
+    H_in<<1.0;
     H = H_in;
 
     //测量噪声矩阵附初值
-    Eigen::MatrixXd R_in(2,2);
-    R_in<<1,0,
-    0,1;
+    Eigen::MatrixXd R_in(1,1);
+    R_in<<1;
     R = R_in*10;
 }
 
@@ -110,7 +106,11 @@ void KF_two::update(Eigen::VectorXd z,Eigen::MatrixXd _F){
     x_ = x_ + (K*y);
 
     int size = x_.size();
-
+    if(size == 1){
+        Eigen::MatrixXd I(1,1);
+        I << 1;
+        P = (I - K*H)*P;
+    }
 //    Eigen::MatrixXd I = Eigen::MatrixXd(size,size);
     if(size == 4){
         Eigen::MatrixXd I(4,4);
