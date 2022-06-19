@@ -10,7 +10,6 @@ private:
     double getCenterAngle(Point2f circle_center,Point2f center);
     Point2f getPredict(Point2f circle_center_point,Point2f target_point,double predictangel);
     Point2f circle_center;
-    bool is_rotation=true;
     void KF_angle(double angle,KF_two& Filter);
     double calStartTimeInPeriod(float angle_diff_of_interval, double time_interval)
     {
