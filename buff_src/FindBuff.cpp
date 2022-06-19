@@ -108,33 +108,33 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
         count_del_time=0;
     }
 
-//    double temp=calStartTimeInPeriod(Buff.del_time,Buff.del_angle);
-//    if(!std::isnan(temp)&&isset==false){
-//        begin_time=temp;
-//        isset=true;
-//    }
-//    if(begin_time!=0){
-//        Buff.del_angle=del_angle;
-//        is_pass_time+=del_time;
-//        last_angle=predict_angle;
-//        predict_angle=calPredictAngleByPeriod(begin_time,is_pass_time);
-//
-//        double temp=predict_angle-last_angle;
-//
-//        circle(Src,Buff.predict,CV_AA,Scalar(255,0,255),3);
-//
-//        last_true_angle=now_true_angle;
-//        now_true_angle=Buff.del_angle;
-////        KF_angle(temp,anglefilter);
-////        KF_angle(last_true_angle-Buff.del_angle,errofilter);
-////        now_true_angle=anglefilter.x_(0);
-//        draw.InsertData(temp,last_true_angle,"predict","value","boxing");
-////        draw.InsertData(anglefilter.x_(0));
-////        draw.InsertData(last_true_angle-Buff.del_angle);
-////        draw.InsertData(last_true_angle+errofilter.x_(0),Buff.del_angle,"value","predict","angleboxing");
-//        Buff.predict= getPredict(Buff.circle_center,Buff.box.center,temp);
-//
-//    }
+    double temp=calStartTimeInPeriod(Buff.del_time,Buff.del_angle);
+    if(!std::isnan(temp)&&isset==false){
+        begin_time=temp;
+        isset=true;
+    }
+    if(begin_time!=0){
+        Buff.del_angle=del_angle;
+        is_pass_time+=del_time;
+        last_angle=predict_angle;
+        predict_angle=calPredictAngleByPeriod(begin_time,is_pass_time);
+
+        double temp=predict_angle-last_angle;
+
+        circle(Src,Buff.predict,CV_AA,Scalar(255,0,255),3);
+
+        last_true_angle=now_true_angle;
+        now_true_angle=Buff.del_angle;
+//        KF_angle(temp,anglefilter);
+//        KF_angle(last_true_angle-Buff.del_angle,errofilter);
+//        now_true_angle=anglefilter.x_(0);
+        draw.InsertData(temp,last_true_angle,"predict","value","boxing");
+//        draw.InsertData(anglefilter.x_(0));
+//        draw.InsertData(last_true_angle-Buff.del_angle);
+//        draw.InsertData(last_true_angle+errofilter.x_(0),Buff.del_angle,"value","predict","angleboxing");
+        Buff.predict= getPredict(Buff.circle_center,Buff.box.center,temp);
+
+    }
     //存入数组,进入分析
     if(BuffNum == 0){
         BuffNum++;
