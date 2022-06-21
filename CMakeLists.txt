@@ -55,3 +55,5 @@ target_link_libraries(RM ${OpenCV_LIBS} gxiapi ${CERES_LIBRARIES})
 
 # ´óºãinclude files
 include_directories(./header)
+# Á´½ÓOpencv¿â
+target_link_libraries(RM ${OpenCV_LIBS} gxiapi ${CERES_LIBRARIES})

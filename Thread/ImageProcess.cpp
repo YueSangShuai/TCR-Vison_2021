@@ -170,7 +170,7 @@ void ImageProcess::ImageConsumer() {
 //        if (USE_BUFFER == false)
 //            Image[(ImageIndex) % BUFFER].mode = DAHENG;
 //        else
-            //Image[ImageIndex%BUFFER].mode=BUFF;
+            Image[ImageIndex%BUFFER].mode=BUFF;
         if (Image[(ImageIndex) % BUFFER].mode == DAHENG) {        // 自瞄(非BUFF模式)
             // 设置敌方战车灯条颜色
             detector.setEnemyColor(ENEMYCOLOR);
@@ -257,9 +257,9 @@ void ImageProcess::ImageConsumer() {
                          Scalar(0, 0, 255), 4, 4);
                 }
                 //circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].circle_center,CV_AA,Scalar(255,0,0),3);
-                //上+pith 右-yaw
-                buff_pitch=Buffs[3].pitch-11.5+0.5;
-                buff_yaw=-Buffs[3].yaw-14.5-0.5;
+                //上-pith 右+yaw
+                buff_pitch=-Buffs[3].pitch+10;
+                buff_yaw=Buffs[3].yaw+14.5;
                 //circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].predict,CV_AA,Scalar(255,0,0),3)
 //                    if(Buffs[3].rotation==1){
 //                        buff_pitch=Buffs[3].pitch-12;
