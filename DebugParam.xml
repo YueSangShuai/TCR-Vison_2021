@@ -2,8 +2,8 @@
 <opencv_storage>
 <RGB_BinaryValue>
   <GrayValue>130</GrayValue>
-  <RGrayValue>43</RGrayValue>
-  <BGrayValue>68</BGrayValue></RGB_BinaryValue>
+  <RGrayValue>0</RGrayValue>
+  <BGrayValue>0</BGrayValue></RGB_BinaryValue>
 <HSV_BinaryValue>
   <RLowH>0</RLowH>
   <RLowS>0</RLowS>

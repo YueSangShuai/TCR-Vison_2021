@@ -23,13 +23,15 @@ int rotationzheng=0;
 int rotationfu=0;
 int BuffNum = 0;
 
-double blueDecay=0.4;
+double blueDecay=0.3;
 uint8_t dilateKernelSize=3;
-uint8_t binaryThreshold=80;
+uint8_t binaryThreshold=100;
 int image_count=0;
 double count_del_angle=0;
 double count_del_time=0;
-int now_rotation=0;
+
+double now_angle=0;
+double last_angle=0;
 
 KF_two anglefilter;
 double now_speed=0;
@@ -70,34 +72,11 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
 
     image_count++;
     if(image_count==maxImage)image_count=0;
-    double rotation= BuffBox[3].armoranle-BuffBox[2].armoranle;
-//    if(rotationNum<3*maxImage){
-//        if(rotation<0){
-//            rotationzheng++;
-//        }else if(rotation>0){
-//            rotationfu++;
-//        }
-//        rotationNum++;
-//    }
-//    else
-//    {
-//        if(rotationzheng>rotationfu){
-//            rotationbool=1;
-//        }else if(rotationzheng<rotationfu){
-//            rotationbool=-1;
-//        }
-//       now_rotation=rotationbool;
-//        rotationNum=0;
-//        rotationzheng=0;
-//        rotationfu=0;
-//    }
-//    Buff.rotation=now_rotation;
-//    cout<<"rotation:"<<Buff.rotation<<endl;
     float del_angle= GetAngle(Buff.circle_center,Buff.box.center,BuffBox[3].box.center)*(PI/180);
     float  del_time=Buff.timestamp-BuffBox[3].timestamp;
 
     last_speed=now_speed;
-
+    last_angle=now_angle;
     double erro=now_speed-last_speed;
     double predict_angle=del_angle;
     KF_angle(predict_angle,anglefilter);
@@ -108,21 +87,16 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     }
 
     if(erro>0){
-        predict_angle*=2;
+        predict_angle*=1.1;
     }else{
         predict_angle*=0.9;
     }
     Buff.predict= getPredict(Buff.circle_center,Buff.box.center,predict_angle);
-//    if(Buff.rotation==-1){
-//        Buff.predict= getPredict(Buff.circle_center,Buff.box.center,-predict_angle);
-//    }else{
-//        Buff.predict= getPredict(Buff.circle_center,Buff.box.center,predict_angle);
-//    }
     if(isfind==false) Buff.predict= Buff.box.center;
     isfind=false;
 
-    draw.InsertData(del_angle,last_speed,"shiji","predict","boxing");
-    now_speed=predict_angle;
+
+
     if(Buff.image_count<maxImage-1){
         count_del_angle+=del_angle;
         count_del_time+=del_time;
@@ -238,7 +212,7 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
                 minEnclosingCircle(contours[i], center, radius);
                 //circle(Src,center,CV_AA,Scalar(255,0,0),8);
                 //半径需要具体调试
-                if (radius < 20 && radius > 3) {
+                if (radius < 10 && radius > 3) {
                     possibleCenter.push_back(center);
                     //circle(Src,center,CV_AA,Scalar(255,0,0),8);
                 }
@@ -279,15 +253,17 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
                 //计算与目标装甲板中心的夹角
                 angle=acos((x4*x1+y1*y4)/dd1/d1)*57.3;
 
-                int minRadius=50;
-                int maxRadius=200;
+                int minRadius=40;
+                int maxRadius=75;
                 //根据半径范围和与短边（锤子柄）的角度筛选出中心R
                 if(d1>minRadius && d1 < maxRadius && (angle<10||angle>170))
                 {
                     Mat debug=src.clone();
                     circle_center=p;
                     isfind=true;
-                    circle(Src,p,CV_AA,Scalar(255,0,0),8);
+                    circle(Src,p,CV_AA,Scalar(255,0,0),2);
+                    //circle(Src,box_buffs[i].center,minRadius,Scalar(255,0,0),2);
+                    //circle(Src,box_buffs[i].center,maxRadius,Scalar(255,0,0),2);
                     //imshow("绘制ing",Src);
                     break;
                 }

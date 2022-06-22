@@ -28,7 +28,7 @@ KF_two::KF_two(){
     //测量噪声矩阵附初值
     Eigen::MatrixXd R_in(1,1);
     R_in<<1;
-    R = R_in*1;
+    R = R_in*10;
 }
 
 /**

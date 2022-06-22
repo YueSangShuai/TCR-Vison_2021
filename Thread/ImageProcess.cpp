@@ -260,8 +260,8 @@ void ImageProcess::ImageConsumer() {
                 }
                 //circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].circle_center,CV_AA,Scalar(255,0,0),3);
                 //上-pith 右+yaw
-                buff_pitch=-Buffs[3].pitch+10;
-                buff_yaw=Buffs[3].yaw+14.5;
+                buff_pitch=-Buffs[3].pitch+9.7;
+                buff_yaw=Buffs[3].yaw+14.7;
 
                 circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].predict,CV_AA,Scalar(255,0,255),3);
                 char test[100];
@@ -275,7 +275,7 @@ void ImageProcess::ImageConsumer() {
                 cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test,
                             cv::Point(Image[(ImageIndex) % BUFFER].SrcImage.cols / 3, 40), cv::FONT_HERSHEY_SIMPLEX,
                             1, cv::Scalar(255, 255, 255), 1, 8);
-                //cv::namedWindow("绘制",WINDOW_FULLSCREEN);
+                cv::namedWindow("绘制",WINDOW_FULLSCREEN);
                 imshow("绘制",Image[(ImageIndex)%BUFFER].SrcImage);
                 ArmorToData(Shoot,buff_pitch,buff_yaw);
             }
