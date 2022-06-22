@@ -23,9 +23,9 @@ int rotationzheng=0;
 int rotationfu=0;
 int BuffNum = 0;
 
-double blueDecay=0.3;
-uint8_t red_dilateKernelSize=5;
-uint8_t binaryThreshold=95;
+double blueDecay=0.4;
+uint8_t dilateKernelSize=3;
+uint8_t binaryThreshold=80;
 int image_count=0;
 double count_del_angle=0;
 double count_del_time=0;
@@ -179,47 +179,22 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
  * @return
  */
 void FindBuff::PreDelBuff(Mat Src, Mat &dst,int color){
-if(color==1){
     Mat channels[3],mid,bin;
     split(Src,channels);
-//衰减蓝色通道
+    //衰减蓝色通道
     for(int i=0;i<Src.cols*Src.rows;i++)
     {
-        channels[2].data[i]*=(1-blueDecay);
+        channels[0].data[i]*=(1-blueDecay);
     }
-//红通道-蓝通道
-    subtract(channels[0],channels[2],mid);
-    threshold(mid,bin,binaryThreshold,255,THRESH_BINARY);
-    Mat element = getStructuringElement(MORPH_ELLIPSE,Point(red_dilateKernelSize,red_dilateKernelSize));
-    dilate(bin,mid,element);
-    Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(5,5));
-//    morphologyEx(mid,bin,MORPH_CLOSE,kernel);
-    dst=bin;
-    //imshow("Src",bin);
-//    imshow("分割",dst);
-}
-else if(color==2){
-    //红色
-    Mat channels[3],mid,bin;
-    split(Src,channels);
-//衰减蓝色通道
-    for(int i=0;i<Src.cols*Src.rows;i++)
-    {
-        channels[2].data[i]*=(1-blueDecay);
-    }
-//红通道-蓝通道
+    //红通道-蓝通道
     subtract(channels[2],channels[0],mid);
-
     threshold(mid,bin,binaryThreshold,255,THRESH_BINARY);
-
-    Mat element = getStructuringElement(MORPH_ELLIPSE,Point(red_dilateKernelSize,red_dilateKernelSize));
+    Mat element = getStructuringElement(MORPH_ELLIPSE,Point(dilateKernelSize,dilateKernelSize));
     dilate(bin,mid,element);
-//    imshow("mid",mid);
     Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(7,7));
     morphologyEx(mid,bin,MORPH_CLOSE,kernel);
     dst=bin;
-    imshow("Src",bin);
-}
+    imshow("dst",dst);
 }
 
 /**
@@ -251,7 +226,7 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
                         aspectRatio = 1 / aspectRatio;
                     //qDebug()<<"面积:"<<area<<",长宽比:"<<aspectRatio<<",面积比:"<<areaRatio<<endl;
                     //TODO:确定实际装甲板面积、长宽比、面积占比
-                    if (area > 200&& aspectRatio < 0.7 && areaRatio > 0.6) {
+                    if (area > 100&& aspectRatio < 0.8 && areaRatio > 0.6) {
                         ellipse(Src, rect, Scalar(0,255,0), 5, CV_AA);
                         box_buffs.push_back(rect);
                     }
@@ -305,7 +280,7 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
                 angle=acos((x4*x1+y1*y4)/dd1/d1)*57.3;
 
                 int minRadius=50;
-                int maxRadius=150;
+                int maxRadius=200;
                 //根据半径范围和与短边（锤子柄）的角度筛选出中心R
                 if(d1>minRadius && d1 < maxRadius && (angle<10||angle>170))
                 {
