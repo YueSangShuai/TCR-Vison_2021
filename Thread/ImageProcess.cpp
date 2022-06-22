@@ -32,6 +32,8 @@ ImageGetMode last_model = DAHENG;
 
 FindBuff BuffDetector;
 BuffAngleSolver BuffAngleData;
+
+
 // 导入装甲板识别类
 ArmorDetector detector;
 // 导入角度解算类
@@ -260,14 +262,7 @@ void ImageProcess::ImageConsumer() {
                 //上-pith 右+yaw
                 buff_pitch=-Buffs[3].pitch+10;
                 buff_yaw=Buffs[3].yaw+14.5;
-                //circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].predict,CV_AA,Scalar(255,0,0),3)
-//                    if(Buffs[3].rotation==1){
-//                        buff_pitch=Buffs[3].pitch-12;
-//                        buff_yaw=-Buffs[3].yaw-14+1.3;
-//                    }else if(Buffs[3].rotation==-1){
-//                        buff_pitch=-(Buffs[3].pitch-12+0.7);
-//                        buff_yaw=(Buffs[3].yaw+14+1.3);
-//                    }
+
                 circle(Image[(ImageIndex) % BUFFER].SrcImage,Buffs[3].predict,CV_AA,Scalar(255,0,255),3);
                 char test[100];
                 sprintf(test, "angle:%0.4f", Buffs[3].armoranle*57.3);
@@ -280,15 +275,9 @@ void ImageProcess::ImageConsumer() {
                 cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test,
                             cv::Point(Image[(ImageIndex) % BUFFER].SrcImage.cols / 3, 40), cv::FONT_HERSHEY_SIMPLEX,
                             1, cv::Scalar(255, 255, 255), 1, 8);
-                cv::namedWindow("绘制",WINDOW_FULLSCREEN);
+                //cv::namedWindow("绘制",WINDOW_FULLSCREEN);
                 imshow("绘制",Image[(ImageIndex)%BUFFER].SrcImage);
                 ArmorToData(Shoot,buff_pitch,buff_yaw);
-//                if(Buffs[3].image_count==maxImage-1){
-//
-//                }else{
-//                    buff_pitch=0;
-//                    buff_yaw=0;
-//                }
             }
             else
             {

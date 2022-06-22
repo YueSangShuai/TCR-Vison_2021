@@ -364,6 +364,7 @@ RM: CMakeFiles/RM.dir/buff_src/BuffAngleSolver.cpp.o
 RM: CMakeFiles/RM.dir/DrawCurve/DraCurve.cpp.o
 RM: CMakeFiles/RM.dir/buff_src/predict.cpp.o
 RM: CMakeFiles/RM.dir/build.make
+RM: /usr/local/lib/libceres.a
 RM: /usr/local/lib/libopencv_dnn.so.3.4.2
 RM: /usr/local/lib/libopencv_objdetect.so.3.4.2
 RM: /usr/local/lib/libopencv_stitching.so.3.4.2

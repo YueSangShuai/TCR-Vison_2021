@@ -18,7 +18,7 @@ KF_two::KF_two(){
     //过程噪声矩阵附初值
     Eigen::MatrixXd Q_in(1,1);
     Q_in<<1.0;
-    Q = Q_in*0.01;
+    Q = Q_in*0.05;
 
     //测量矩阵附初值
     Eigen::MatrixXd H_in(1,1);
@@ -28,7 +28,7 @@ KF_two::KF_two(){
     //测量噪声矩阵附初值
     Eigen::MatrixXd R_in(1,1);
     R_in<<1;
-    R = R_in*10;
+    R = R_in*1;
 }
 
 /**
