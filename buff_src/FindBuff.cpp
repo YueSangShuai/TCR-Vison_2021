@@ -19,23 +19,21 @@ int rotationbool=0;
 int rotationNum=0;
 /*************************************************************/
 RM_BuffData BuffBox[BUFFER_BUFF_BOX];       //存储最近几帧的大符信息
-int rotationzheng=0;
-int rotationfu=0;
 int BuffNum = 0;
 
 double blueDecay=0.3;
 uint8_t dilateKernelSize=3;
-uint8_t binaryThreshold=100;
+uint8_t binaryThreshold=90;
 int image_count=0;
 double count_del_angle=0;
 double count_del_time=0;
 
 double now_angle=0;
 double last_angle=0;
-
-KF_two anglefilter;
 double now_speed=0;
 double last_speed=0;
+
+KF_two anglefilter;
 bool isfind=false;
 /**
  *
@@ -77,6 +75,10 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
 
     last_speed=now_speed;
     last_angle=now_angle;
+    now_angle=del_angle;
+
+
+
     double erro=now_speed-last_speed;
     double predict_angle=del_angle;
     KF_angle(predict_angle,anglefilter);
@@ -87,15 +89,21 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
     }
 
     if(erro>0){
-        predict_angle*=1.1;
+        predict_angle*=1.2;
     }else{
         predict_angle*=0.9;
     }
     Buff.predict= getPredict(Buff.circle_center,Buff.box.center,predict_angle);
     if(isfind==false) Buff.predict= Buff.box.center;
     isfind=false;
+    //draw.InsertData(del_angle,predict_angle,"value","predict","boxing");
 
-
+    if(del_angle<0.001){
+        Buff.predict= getPredict(Buff.circle_center,Buff.box.center,0);
+    }
+    if(del_angle>.05){
+        Buff.predict= getPredict(Buff.circle_center,Buff.box.center,0);
+    }
 
     if(Buff.image_count<maxImage-1){
         count_del_angle+=del_angle;
@@ -153,6 +161,7 @@ RM_BuffData* FindBuff::BuffModeSwitch(Mat Src,int color){
  * @return
  */
 void FindBuff::PreDelBuff(Mat Src, Mat &dst,int color){
+    GaussianBlur(Src, Src, Size(3, 3), 0);
     Mat channels[3],mid,bin;
     split(Src,channels);
     //衰减蓝色通道
@@ -162,13 +171,16 @@ void FindBuff::PreDelBuff(Mat Src, Mat &dst,int color){
     }
     //红通道-蓝通道
     subtract(channels[2],channels[0],mid);
+    //imshow("mid",mid);
     threshold(mid,bin,binaryThreshold,255,THRESH_BINARY);
     Mat element = getStructuringElement(MORPH_ELLIPSE,Point(dilateKernelSize,dilateKernelSize));
     dilate(bin,mid,element);
-    Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(7,7));
+    Mat kernel = getStructuringElement(MORPH_ELLIPSE,Point(4,4));
     morphologyEx(mid,bin,MORPH_CLOSE,kernel);
     dst=bin;
-    imshow("dst",dst);
+#ifdef IMSHOW_IMAGE
+    imshow("dst",bin);
+#endif
 }
 
 /**
@@ -200,7 +212,8 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
                         aspectRatio = 1 / aspectRatio;
                     //qDebug()<<"面积:"<<area<<",长宽比:"<<aspectRatio<<",面积比:"<<areaRatio<<endl;
                     //TODO:确定实际装甲板面积、长宽比、面积占比
-                    if (area > 100&& aspectRatio < 0.8 && areaRatio > 0.6) {
+
+                    if (area > 100&& aspectRatio < 0.8 && areaRatio > 0.5) {
                         ellipse(Src, rect, Scalar(0,255,0), 5, CV_AA);
                         box_buffs.push_back(rect);
                     }
@@ -253,8 +266,10 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
                 //计算与目标装甲板中心的夹角
                 angle=acos((x4*x1+y1*y4)/dd1/d1)*57.3;
 
-                int minRadius=40;
-                int maxRadius=75;
+                int minRadius=50;
+                int maxRadius=88;
+                circle(Src,box_buffs[i].center,minRadius,Scalar(255,0,0),2);
+                circle(Src,box_buffs[i].center,maxRadius,Scalar(255,0,0),2);
                 //根据半径范围和与短边（锤子柄）的角度筛选出中心R
                 if(d1>minRadius && d1 < maxRadius && (angle<10||angle>170))
                 {
@@ -262,15 +277,16 @@ vector<RotatedRect> FindBuff::FindBestBuff(Mat Src,Mat & dst) {
                     circle_center=p;
                     isfind=true;
                     circle(Src,p,CV_AA,Scalar(255,0,0),2);
-                    //circle(Src,box_buffs[i].center,minRadius,Scalar(255,0,0),2);
-                    //circle(Src,box_buffs[i].center,maxRadius,Scalar(255,0,0),2);
-                    //imshow("绘制ing",Src);
+
                     break;
                 }
             }
         }
     }
+#ifdef IMSHOW_IMAGE
+
     imshow("绘制ing", Src);
+#endif
     return box_buffs;
 
 }

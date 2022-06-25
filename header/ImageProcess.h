@@ -10,7 +10,7 @@
 
 #include "Armor.h"
 #include "AngleSolver_2.h"
-
+using namespace cv;
 class ImageProcess {
 public:
     // 无参数构造函数

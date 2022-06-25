@@ -17,6 +17,8 @@
 #define Serial_Path "/dev/ttyUSB0"	   // linux默认串口路径
 #define Serial_Baud 0                   // 串口波特率(0表示115200    1表示921600)
 
+//#define IMSHOW_IMAGE
+
 using namespace std;
 using namespace cv;
 // 外部变量

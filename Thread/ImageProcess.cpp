@@ -3,12 +3,16 @@
 	* Details: 图像获取和处理控制
 	* Remarks: 利用多线程异步处理图像的获取与处理步骤，提高cpu的利用率，提高程序运行速度，图像的获取与处理控制采用生产者和消费者的方法
 */
-
+#include "opencv2/highgui/highgui.hpp"
 #include "../header/ImageProcess.h"
 #include "../DaHengCamera/DaHengCamera.h"
 #include<sys/timeb.h>
 #include "../buff_include/FindBuff.h"
 #include "../buff_include/BuffAngleSolver.h"
+
+#include<opencv2/highgui.hpp>
+#include<opencv2/imgcodecs.hpp>
+#include<opencv2/opencv.hpp>
 
 // 模式设置
 #define USING_CAMERA			// 使用大恒相机获取图像
@@ -30,6 +34,7 @@ double fps;
 bool USE_BUFFER = false;
 ImageGetMode last_model = DAHENG;
 
+
 FindBuff BuffDetector;
 BuffAngleSolver BuffAngleData;
 
@@ -47,6 +52,9 @@ ImageProcess::ImageProcess() {
     consIdx = 0;
 }
 
+// 使用大恒相机获取图像进行调试
+DaHengCamera CameraTure;
+
 // 获取图像函数
 void ImageProcess::ImageProducter() {
 #ifdef DEBUG_ARMOR		// 利用装甲板视频进行调试
@@ -57,20 +65,21 @@ void ImageProcess::ImageProducter() {
 #endif
 
 #ifdef USING_CAMERA
-    // 使用大恒相机获取图像进行调试
-    DaHengCamera CameraTure;
+
     // 链接设备
     CameraTure.StartDevice(1);
     // 设置分辨率(设置分辨率要在摄像头开始采集之前)
     CameraTure.SetResolution(2,2);
-    // 控制设备开采
-    CameraTure.SetStreamOn();
+    CameraTure.SetExposureTime(0);
     // 设置曝光值
     CameraTure.SetExposureTime(GXExpTimeValue);
     // 设置曝光增益
-    CameraTure.SetGAIN(3,GXGain);
+    CameraTure.SetGAIN(0,GXGain);
     // 关闭自动白平衡
-    CameraTure.Set_BALANCE_AUTO(0);
+    CameraTure.Set_BALANCE_AUTO(1);
+    // 控制设备开采
+    CameraTure.SetStreamOn();
+
 #endif // USING_CAMERA
 
     // 生产部分循环
@@ -275,8 +284,10 @@ void ImageProcess::ImageConsumer() {
                 cv::putText(Image[(ImageIndex) % BUFFER].SrcImage, test,
                             cv::Point(Image[(ImageIndex) % BUFFER].SrcImage.cols / 3, 40), cv::FONT_HERSHEY_SIMPLEX,
                             1, cv::Scalar(255, 255, 255), 1, 8);
-                cv::namedWindow("绘制",WINDOW_FULLSCREEN);
+                //cv::namedWindow("绘制",WINDOW_FULLSCREEN);
+#ifdef IMSHOW_IMAGE
                 imshow("绘制",Image[(ImageIndex)%BUFFER].SrcImage);
+#endif
                 ArmorToData(Shoot,buff_pitch,buff_yaw);
             }
             else
